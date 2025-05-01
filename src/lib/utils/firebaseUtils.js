@@ -27,7 +27,7 @@ export const firestoreService = {
       const docSnap = await getDoc(docRef);
       return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
     } catch (error) {
-      throw this._handleError('GET', collectionName, docId, error);
+      throw firestoreService._handleError('GET', collectionName, docId, error);
     }
   },
 
@@ -45,7 +45,7 @@ export const firestoreService = {
         snapshot
       };
     } catch (error) {
-      throw this._handleError('QUERY', collectionName, null, error);
+      throw firestoreService._handleError('QUERY', collectionName, null, error);
     }
   },
 
@@ -55,7 +55,7 @@ export const firestoreService = {
       const docRef = await addDoc(collection(db, collectionName), data);
       return { id: docRef.id, ...data };
     } catch (error) {
-      throw this._handleError('ADD', collectionName, null, error);
+      throw firestoreService._handleError('ADD', collectionName, null, error);
     }
   },
 
@@ -65,7 +65,7 @@ export const firestoreService = {
       await setDoc(doc(db, collectionName, docId), data, { merge });
       return { id: docId, ...data };
     } catch (error) {
-      throw this._handleError('SET', collectionName, docId, error);
+      throw firestoreService._handleError('SET', collectionName, docId, error);
     }
   },
 
@@ -75,7 +75,7 @@ export const firestoreService = {
       await updateDoc(doc(db, collectionName, docId), updates);
       return { id: docId, ...updates };
     } catch (error) {
-      throw this._handleError('UPDATE', collectionName, docId, error);
+      throw firestoreService._handleError('UPDATE', collectionName, docId, error);
     }
   },
 
@@ -85,7 +85,7 @@ export const firestoreService = {
       await deleteDoc(doc(db, collectionName, docId));
       return { id: docId, deleted: true };
     } catch (error) {
-      throw this._handleError('DELETE', collectionName, docId, error);
+      throw firestoreService._handleError('DELETE', collectionName, docId, error);
     }
   },
 

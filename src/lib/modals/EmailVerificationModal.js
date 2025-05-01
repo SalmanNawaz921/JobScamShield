@@ -41,10 +41,9 @@ const EmailVerificationModel = {
       token,
       db
     );
+    if (!doc) return false;
 
-    if (!doc.exists) return false;
-
-    const data = doc.data();
+    const data = doc
     if (data.used || new Date(data.expiresAt) < new Date()) {
       return false;
     }

@@ -1,37 +1,53 @@
 "use client";
-
-import { Avatar, Button, Dropdown, Menu } from "antd";
-import { LogoutOutlined, MenuOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
-import Link from "next/link";
+import { Avatar, Button, Dropdown, message } from "antd";
+import {
+  LogoutOutlined,
+  MenuOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { handleLogout } from "@/services/authServices";
 
 export default function Navbar({ mobile, setIsMenuOpen, userData }) {
   const router = useRouter();
   const items = [
     {
-      key: '1',
-      label: 'My Account',
+      key: "1",
+      label: "My Account",
       disabled: true,
     },
     {
-      type: 'divider',
+      type: "divider",
     },
     {
-      key: '2',
-      label: 'Profile',
-      extra: '⌘P',
+      key: "2",
+      label: "Profile",
+      extra: "⌘P",
     },
     {
-      key: '3',
-      label: 'Billing',
-      extra: '⌘B',
+      key: "3",
+      label: "Billing",
+      extra: "⌘B",
     },
     {
-      key: '4',
-      label: 'Settings',
+      key: "4",
+      label: "Settings",
       icon: <SettingOutlined />,
-      extra: '⌘S',
+      extra: "⌘S",
+    },
+    {
+      key: "5",
+      label: "Logout",
+      icon: <LogoutOutlined />,
+      onClick: async () => {
+        const resp = await handleLogout();
+        if (resp) {
+          router.push("/login");
+          message.success("Logged out successfully!");
+        }
+      },
+      extra: "⌘S",
     },
   ];
   return (
@@ -61,7 +77,9 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
                 border: "2px solid #ffffff",
               }}
             />
-            <span className="text-lg text-white">{userData?.name || "Guest"}</span>
+            <span className="text-lg text-white">
+              {userData?.name || "Guest"}
+            </span>
           </Button>
         </Dropdown>
       </div>

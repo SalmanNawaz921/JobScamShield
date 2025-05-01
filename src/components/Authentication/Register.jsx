@@ -2,8 +2,8 @@
 import { registerFormFields } from "@/lib/constants/constants";
 import { AuthTemplate } from "./AuthTemplate";
 import { useRouter } from "next/navigation";
-import { message } from "antd";
 import axios from "axios";
+import { message } from "antd";
 
 const Register = () => {
   const router = useRouter();
@@ -22,6 +22,7 @@ const Register = () => {
       },
     });
     if (resp.status === 200) {
+      console.log("User registered successfully:", resp.data);
       message.success("User registered successfully!");
       // Send verification email
       const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random OTP
@@ -31,7 +32,7 @@ const Register = () => {
         link: `${window.location.origin}/verify-email`,
         subject: "Verify your email address",
         message: `Welcome To JobScamShield, In order to complete your registration, please verify your email address.`,
-        userId:"123"
+        userId: resp.data.userId,
       };
       const emailResp = await axios.post("/api/send-email", emailData, {
         headers: {
@@ -41,7 +42,6 @@ const Register = () => {
 
       if (emailResp.status === 200) {
         message.success("Verification email sent successfully!");
-        router.push("/verify-email"); // Redirect to verify email page
       }
       // Handle email sending error
       else {

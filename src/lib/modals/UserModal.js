@@ -1,5 +1,5 @@
 import { firestoreService } from "@/lib/utils/firebaseUtils";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 /* ======================
    FIELD DEFINITIONS
@@ -17,6 +17,11 @@ const UserFields = {
     },
     firstName: { type: "string", required: true },
     lastName: { type: "string", required: true },
+    role: {
+      type: "string",
+      default: "user",
+      enum: ["user", "admin", "superadmin"],
+    },
     profilePicture: { type: "string", default: null },
     emailVerified: { type: "boolean", default: false },
     twoFactorEnabled: { type: "boolean", default: false },
@@ -40,7 +45,7 @@ const validateUser = (data) => {
       errors.push(`${field} is required`);
     }
     if (config.enum && data[field] && !config.enum.includes(data[field])) {
-      errors.push(`${field} must be one of: ${config.enum.join(', ')}`);
+      errors.push(`${field} must be one of: ${config.enum.join(", ")}`);
     }
   });
   return errors;
@@ -51,7 +56,7 @@ const validateUser = (data) => {
 ====================== */
 const UserModel = {
   // Create new user with all fields populated
-  create: async (db, data) => {
+  create: async (db, data, includePrivateFields = false) => {
     // Validate input data
     const validationErrors = validateUser(data);
     if (validationErrors.length > 0) {
@@ -59,78 +64,93 @@ const UserModel = {
     }
 
     // Check unique fields
-    await this.checkUniqueFields(db, data);
+    await UserModel.checkUniqueFields(db, data);
 
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     // Apply default values for all fields that aren't provided
-    const userData = Object.entries(UserFields.FIELDS).reduce((acc, [field, config]) => {
-      // Skip password here - we'll handle it separately
-      if (field === 'password') return acc;
+    const userData = Object.entries(UserFields.FIELDS).reduce(
+      (acc, [field, config]) => {
+        // Skip password here - we'll handle it separately
+        if (field === "password") return acc;
 
-      acc[field] = data[field] !== undefined ? data[field] : 
-                  (config.default !== undefined ? 
-                    (typeof config.default === 'function' ? config.default() : config.default) : 
-                    null);
-      return acc;
-    }, {});
+        acc[field] =
+          data[field] !== undefined
+            ? data[field]
+            : config.default !== undefined
+            ? typeof config.default === "function"
+              ? config.default()
+              : config.default
+            : null;
+        return acc;
+      },
+      {}
+    );
 
     // Add the hashed password
     userData.password = hashedPassword;
 
-    return await firestoreService.add(UserFields.COLLECTION, userData, db);
+    const user = await firestoreService.add(
+      UserFields.COLLECTION,
+      userData,
+      db
+    );
+    return includePrivateFields ? user : UserModel.sanitizeUser(user);
   },
 
   // Check if unique fields already exist
   checkUniqueFields: async (db, data) => {
     const errors = [];
-    
+
     for (const field of UNIQUE_FIELDS) {
       if (data[field]) {
-        const querySnapshot = await db.collection(UserFields.COLLECTION)
-          .where(field, '==', data[field])
-          .limit(1)
-          .get();
-        
-        if (!querySnapshot.empty) {
+        const result = await firestoreService.query(
+          UserFields.COLLECTION,
+          [[field, "==", data[field]]],
+          db
+        );
+
+        if (!result.empty) {
           errors.push(`${field} already exists`);
         }
       }
     }
 
     if (errors.length > 0) {
-      throw new Error(errors.join(', '));
+      throw new Error(errors.join(", "));
     }
   },
 
   // Get user by ID (without private fields)
   getById: async (db, userId) => {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
-    return this.sanitizeUser(user);
+    return UserModel.sanitizeUser(user);
   },
 
   // Get user by email (for authentication)
   getByEmail: async (db, email) => {
-    const querySnapshot = await db.collection(UserFields.COLLECTION)
-      .where('email', '==', email)
-      .limit(1)
-      .get();
-    
-    if (querySnapshot.empty) return null;
-    
+    const result = await firestoreService.query(
+      UserFields.COLLECTION,
+      [["email", "==", email]],
+      db
+    );
+
+    if (result.empty) return null;
+
+    const userData = result.docs[0];
     const user = {
-      id: querySnapshot.docs[0].id,
-      ...querySnapshot.docs[0].data()
+      id: userData.id,
+      ...userData,
     };
-    
-    return user; // Return with password for auth verification
+
+    return UserModel.sanitizeUser(user);
   },
 
   // Sanitize user object by removing private fields
   sanitizeUser: (user) => {
     if (!user) return null;
-    
+
     const sanitized = { ...user };
     Object.entries(UserFields.FIELDS).forEach(([field, config]) => {
       if (config.private) {
@@ -143,13 +163,13 @@ const UserModel = {
   // Update specific fields
   update: async (db, userId, updates) => {
     // Don't allow updating unique fields through regular update
-    const restrictedUpdates = ['email', 'username'];
-    const hasRestrictedUpdate = Object.keys(updates).some(field => 
+    const restrictedUpdates = ["email", "username"];
+    const hasRestrictedUpdate = Object.keys(updates).some((field) =>
       restrictedUpdates.includes(field)
     );
-    
+
     if (hasRestrictedUpdate) {
-      throw new Error('Cannot update email or username through this method');
+      throw new Error("Cannot update email or username through this method");
     }
 
     const allowedUpdates = Object.keys(UserFields.FIELDS).filter(
@@ -160,50 +180,54 @@ const UserModel = {
       .filter((key) => allowedUpdates.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: updates[key] }), {});
 
-    return await firestoreService.update(
+    const user = await firestoreService.update(
       UserFields.COLLECTION,
       userId,
       validUpdates,
       db
     );
+    return UserModel.sanitizeUser(user);
   },
 
   // Update email (with unique check)
   updateEmail: async (db, userId, newEmail) => {
-    await this.checkUniqueFields(db, { email: newEmail });
-    return await firestoreService.update(
+    await UserModel.checkUniqueFields(db, { email: newEmail });
+    const user = await firestoreService.update(
       UserFields.COLLECTION,
       userId,
       { email: newEmail },
       db
     );
+    return UserModel.sanitizeUser(user);
   },
 
   // Update username (with unique check)
   updateUsername: async (db, userId, newUsername) => {
-    await this.checkUniqueFields(db, { username: newUsername });
-    return await firestoreService.update(
+    await UserModel.checkUniqueFields(db, { username: newUsername });
+    const user = await firestoreService.update(
       UserFields.COLLECTION,
       userId,
       { username: newUsername },
       db
     );
+    return UserModel.sanitizeUser(user);
   },
 
   // Update password (with hashing)
   updatePassword: async (db, userId, newPassword) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    return await firestoreService.update(
+    const user = await firestoreService.update(
       UserFields.COLLECTION,
       userId,
       { password: hashedPassword },
       db
     );
+    return UserModel.sanitizeUser(user);
   },
 
   // Enable 2FA
   enable2FA: async (db, userId, secret) => {
-    return await firestoreService.update(
+    const user = await firestoreService.update(
       UserFields.COLLECTION,
       userId,
       {
@@ -212,6 +236,7 @@ const UserModel = {
       },
       db
     );
+    return UserModel.sanitizeUser(user);
   },
 
   // Verify password

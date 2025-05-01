@@ -16,6 +16,7 @@
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "firebase": "^11.6.1",
     "framer-motion": "^12.9.2",
     "handlebars": "^4.7.8",

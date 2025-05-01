@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 export async function middleware(req) {
-  const { pathname } = req.nextUrl;
+  const { pathname, origin } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
 
   // Bypass static files and public assets
@@ -15,6 +15,7 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
+  // Define public routes
   const publicRoutes = [
     "/",
     "/login",
@@ -27,42 +28,44 @@ export async function middleware(req) {
     "/term&condition",
     "/salespage",
   ];
-  const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (!token && !isPublicRoute) {
-    console.log("No token found, redirecting to login page");
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
+  // Handle public routes
   if (isPublicRoute) {
     return NextResponse.next();
   }
 
+  // If no token and not public route → redirect to login
+  if (!token) {
+    console.log("No token found, redirecting to login");
+    return NextResponse.redirect(new URL("/login", origin));
+  }
+
   try {
-    // Direct token verification using jose
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET); // or hardcoded for testing
+    // Verify token
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-    console.log("Token verified successfully", payload);
+    
     const userRole = payload?.role;
     const username = payload?.username;
-    if (userRole === "admin" && !pathname.startsWith("/admin")) {
-      return NextResponse.redirect(new URL("/admin", req.url));
+
+    // Admin route protection
+    if (pathname.startsWith("/admin") && userRole !== "admin") {
+      return NextResponse.redirect(new URL("/login", origin));
     }
 
-    if (
-      userRole !== "admin" &&
-      !pathname.startsWith(`/user/${username}/dashboard`)
-    ) {
-      return NextResponse.redirect(
-        new URL(`/user/${username}/dashboard`, req.url)
-      );
+    // User route protection
+    if (pathname.startsWith("/user") && !pathname.startsWith(`/user/${username}`)) {
+      return NextResponse.redirect(new URL(`/user/${username}/dashboard`, origin));
     }
+
     return NextResponse.next();
   } catch (err) {
     console.error("JWT verification failed", err);
-    return NextResponse.redirect(new URL("/auth", req.url));
+    // Clear invalid token and redirect
+    const response = NextResponse.redirect(new URL("/login", origin));
+    response.cookies.delete("token");
+    return response;
   }
 }
 

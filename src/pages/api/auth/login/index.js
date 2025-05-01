@@ -40,6 +40,4 @@ export default async function handler(req, res) {
       username: user.username,
     },
   });
-
-  return res.status(200).json({ token });
 }

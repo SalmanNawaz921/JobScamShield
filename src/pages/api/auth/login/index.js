@@ -39,5 +39,6 @@ export default async function handler(req, res) {
       email: user.email,
       username: user.username,
     },
+    message: "Login successful",
   });
 }

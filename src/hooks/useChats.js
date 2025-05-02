@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
-import {
-  getChats,
-  createChat as createChatService,
-} from "@/services/chatServices";
+import { getChats, addChat as createChatService } from "@/services/chatServices";
 import { formatFirestoreTimestamp } from "@/lib/utils/utils";
-import { format } from "date-fns";
 
 export const useChat = () => {
   const { userData: user } = useUserContext();

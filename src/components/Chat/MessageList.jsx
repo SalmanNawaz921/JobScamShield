@@ -1,91 +1,91 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Typography } from "antd";
+import { List, Typography, Spin } from "antd";
 import Message from "./Message";
 import ReusableModal from "../ReusableModal/ReusableModal";
-
+import Logo from "@/assets/Logo";
 const { Text } = Typography;
 
-const MessageList = ({
-  messages,
-  currentUserId,
-  onEditMessage,
-  onDeleteMessage,
-}) => {
+const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMessage, setCurrentMessage] = useState(null);
-  const containerRef = useRef(null); // Ref for the message list container
+  const containerRef = useRef(null);
 
-  const formatDate = (date) => {
+  // Format date for grouping
+  const formatDate = (timestamp) => {
+    const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
     const today = new Date();
-    const messageDate = new Date(date);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
     if (
-      messageDate.getDate() === today.getDate() &&
-      messageDate.getMonth() === today.getMonth() &&
-      messageDate.getFullYear() === today.getFullYear()
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
     ) {
       return "Today";
     }
 
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
     if (
-      messageDate.getDate() === yesterday.getDate() &&
-      messageDate.getMonth() === yesterday.getMonth() &&
-      messageDate.getFullYear() === yesterday.getFullYear()
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()
     ) {
       return "Yesterday";
     }
 
-    return messageDate.toLocaleDateString();
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
+  // Group messages by date
   const groupedMessages = messages?.reduce((acc, msg) => {
-    const date = formatDate(msg.createdAt);
-    if (!acc[date]) {
-      acc[date] = [];
-    }
+    const date = formatDate(msg?.createdAt);
+    if (!acc[date]) acc[date] = [];
     acc[date].push(msg);
     return acc;
   }, {});
 
+  // Handle message edit
   const handleEdit = (message) => {
     setCurrentMessage(message);
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (messageId) => {
-    await onDeleteMessage(messageId);
-  };
-
-  const handleSubmitEdit = async (values) => {
-    await onEditMessage(currentMessage?._id, values);
-    setIsModalOpen(false);
-    setCurrentMessage(null);
-  };
-
+  // Auto-scroll to bottom
   useEffect(() => {
-    // Scroll to the bottom whenever the messages change
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }, [messages]); // Run effect when messages change
+  }, [messages]);
+
+  if(!messages || messages.length === 0) {
+    console.log("No messages found.");
+    return (
+     <Logo/>
+    );
+  }
+
 
   return (
     <div
-      ref={containerRef} // Attach the ref to the container
+      ref={containerRef}
       style={{
         flexGrow: 1,
         overflowY: "auto",
         padding: "16px",
-        background: "#f9f9f9",
         borderRadius: "8px",
       }}
     >
-      {Object.keys(groupedMessages).length > 0 ? (
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "24px" }}>
+          <Spin size="large" />
+        </div>
+      ) : Object.keys(groupedMessages).length > 0 ? (
         Object.entries(groupedMessages).map(([date, messages]) => (
           <div key={date}>
-            {/* Date Header */}
             <div
               style={{
                 textAlign: "center",
@@ -97,23 +97,20 @@ const MessageList = ({
             >
               {date}
             </div>
-
-            {/* Messages for the Date */}
             <List
               dataSource={messages}
               renderItem={(msg) => (
                 <Message
                   message={msg}
-                  isSender={msg.userId?._id === currentUserId}
+                  isSender={msg.sender === "user"}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
-                  currentUserId={currentUserId}
                 />
               )}
               style={{
                 marginBottom: "8px",
                 padding: "0 8px",
-                wordWrap: "break-word", // Ensures long text breaks into new lines
+                wordWrap: "break-word",
               }}
             />
           </div>
@@ -127,11 +124,10 @@ const MessageList = ({
             padding: "8px",
           }}
         >
-          No messages in this channel yet.
+          No messages in this chat yet.
         </p>
       )}
 
-      {/* Reusable Modal for Editing Messages */}
       {currentMessage && (
         <ReusableModal
           inputs={[
@@ -140,16 +136,8 @@ const MessageList = ({
               label: "Message Text",
               type: "text",
               required: true,
-              initialValue: currentMessage.text,
-              placeholder: "Enter your message here",
-            },
-            currentMessage.attachments?.length >= 1 && {
-              name: "attachments",
-              label: "Attachments",
-              type: "upload",
-              initialValue: currentMessage.attachments,
-              placeholder: "Upload Files",
-              multiFiles: true,
+              initialValue: currentMessage.content,
+              placeholder: "Edit your message",
             },
           ]}
           formTitle="Edit Message"

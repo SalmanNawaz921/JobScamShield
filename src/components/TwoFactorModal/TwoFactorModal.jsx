@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { generate2faQrCode, verify2faCode } from "@/services/authServices";
+import { message } from "antd";
 
-const BASE_URL = "http://localhost:3000/"; // Replace with your actual base URL
 
 const TwoFactorModal = () => {
   const [otp, setOtp] = useState("");
@@ -11,23 +11,17 @@ const TwoFactorModal = () => {
   const [qrImage, setQrImage] = useState();
   const [secret, setSecret] = useState();
 
-  /* Generate a QR */
-  const get2faQrCode = async () => {
-    const response = await axios.get(`${BASE_URL}api/auth/2fa/qrcode`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.status == 200) {
-      console.log(response.data);
-      setQrImage(response.data.qrCode);
-      setSecret(response.data.secret);
-    }
-  };
-
   useEffect(() => {
-    get2faQrCode();
+    const generate2faQR = async () => {
+      const qrCodeData = await generate2faQrCode();
+      if (qrCodeData) {
+        setQrImage(qrCodeData.qrCode);
+        setSecret(qrCodeData.secret); // Store the secret for later use
+      } else {
+        console.error("Failed to generate 2FA QR code.");
+      }
+    };
+    generate2faQR();
   }, []);
 
   /* Validate Code  */
@@ -36,17 +30,10 @@ const TwoFactorModal = () => {
 
     if (e.target.value.length === 6) {
       const token = e.target.value;
-      const response = await axios.post(
-        `${BASE_URL}api/2fa/verify`,
-        { secret, token },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await verify2faCode(secret, token); // Use the secret stored in state
       if (response.data.verified) {
+        message.success("2FA Enabled successfully!");
+        setInvalidOtp(false);
         // 2FA Enabled successfully
       } else {
         setInvalidOtp(true);
@@ -89,6 +76,8 @@ const TwoFactorModal = () => {
               maxLength="6"
               value={otp}
               onChange={handleOtpChange}
+              placeholder="Enter OTP"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             {/* Invalid Input */}

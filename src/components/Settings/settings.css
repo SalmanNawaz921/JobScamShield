@@ -1,0 +1,19 @@
+.custom-settings-modal .ant-modal-content {
+  background-color: #111827 !important;
+  color: white;
+  padding: 0;
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 24px 16px;
+}
+
+.custom-settings-modal .modal-content-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.custom-settings-modal .modal-main-content {
+  flex: 1;
+  padding: 32px;
+}

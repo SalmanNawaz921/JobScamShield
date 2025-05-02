@@ -79,15 +79,43 @@ const MessageModel = {
       limit,
       startAfter
     );
-    return messages.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    return messages.docs
   },
 
   // Delete message
   delete: async (db, messageId) => {
     await firestoreService.delete(MessageFields.COLLECTION, messageId, db);
+    return true;
+  },
+
+  // Update message
+  update: async (db, messageId, data) => {
+    const validationErrors = validateMessage(data);
+    if (validationErrors.length > 0) {
+      throw new Error(validationErrors.join(", "));
+    }
+
+    const messageData = Object.entries(MessageFields.FIELDS).reduce(
+      (acc, [field, config]) => {
+        acc[field] =
+          data[field] !== undefined
+            ? data[field]
+            : config.default !== undefined
+            ? typeof config.default === "function"
+              ? config.default()
+              : config.default
+            : null;
+        return acc;
+      },
+      {}
+    );
+
+    await firestoreService.update(
+      MessageFields.COLLECTION,
+      messageId,
+      messageData,
+      db
+    );
     return true;
   },
 };

@@ -3,34 +3,24 @@ import { signInFormFields } from "@/lib/constants/constants";
 import { AuthTemplate } from "./AuthTemplate";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
+import { handleLogin } from "@/services/authServices";
 
 const Login = () => {
   const router = useRouter();
-  const handleLogin = async (values) => {
-    const { email, password } = values;
-    const requestBody = {
-      email,
-      password,
-    };
+  const onLogin = async (values) => {
     try {
-      const resp = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        message.success("User logged in successfully!");
-        console.log("User logged in successfully:", data);
-        router.push(`user/${data.user.username}/dashboard`);
-        // Handle successful login (e.g., redirect to dashboard)
-      } else {
-        console.error("Error logging in:", resp.statusText);
+      const user = await handleLogin(values);
+      if (!user) {
+        message.error("Invalid email or password");
+        return;
       }
+      message.success("Login successful!");
+      router.push(`/user/${user.username}/dashboard`);
     } catch (error) {
-      console.error("Error logging in:", error);
+      console.error("Login error:", error);
+      message.error(
+        error.message || "Invalid email or password"
+      );
     }
   };
   return (
@@ -43,7 +33,7 @@ const Login = () => {
       footerText="New to JobScamShield?"
       footerLinkText="Activate protection"
       footerLinkHref="/register"
-      onSubmit={handleLogin}
+      onSubmit={onLogin}
     />
   );
 };

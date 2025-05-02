@@ -8,8 +8,11 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { handleLogout } from "@/services/authServices";
+import Settings from "../Settings/Settings";
+import { useState } from "react";
 
 export default function Navbar({ mobile, setIsMenuOpen, userData }) {
+  const [openSettings, setOpenSettings] = useState(false);
   const router = useRouter();
   const items = [
     {
@@ -34,6 +37,9 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
       key: "4",
       label: "Settings",
       icon: <SettingOutlined />,
+      onClick: () => {
+        setOpenSettings(true);
+      },
       extra: "⌘S",
     },
     {
@@ -83,6 +89,12 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
           </Button>
         </Dropdown>
       </div>
+      {openSettings && (
+        <Settings
+          openSettings={openSettings}
+          setOpenSettings={setOpenSettings}
+        />
+      )}
     </div>
   );
 }

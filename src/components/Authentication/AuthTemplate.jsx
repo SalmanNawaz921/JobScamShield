@@ -29,6 +29,7 @@ export const AuthTemplate = ({
   showForgotPassword = true,
   showSSO = true,
   onSubmit,
+  ExtraComponent,
 }) => {
   return (
     <div
@@ -71,7 +72,7 @@ export const AuthTemplate = ({
             {securityNotice}
           </p>
         </div>
-
+        {ExtraComponent && <ExtraComponent />}
         {/* Form Container */}
         <div
           className={`${bgColor.form} ${borderColor.form} ${spacing.p8} ${borderRadius.xl} ${shadow.card}`}

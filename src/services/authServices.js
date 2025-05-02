@@ -1,89 +1,118 @@
+// authServices.js
 import { message } from "antd";
 import axios from "axios";
 
-const handleLogin = async (values) => {
-  const { email, password } = values;
-  const requestBody = {
-    email,
-    password,
-  };
+const API_BASE_URL = "/api/auth";
+
+export const handleLogin = async (values) => {
   try {
-    const resp = await fetch("/api/auth/login", {
-      method: "POST",
+    const response = await axios.post(`${API_BASE_URL}/login`, values, {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody),
     });
-    if (resp.ok) {
-      const data = await resp.json();
-      message.success("User logged in successfully!");
-      console.log("User logged in successfully:", data);
-      // Handle successful login (e.g., redirect to dashboard)
-    } else {
-      console.error("Error logging in:", resp.statusText);
-    }
+
+    return response.data.user;
   } catch (error) {
-    console.error("Error logging in:", error);
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Invalid email or password"
+      );
+    } else {
+      throw new Error("Network error. Please try again.");
+    }
   }
 };
 
-const handleRegister = async (values) => {
-  const { email, password, firstName, lastName, username } = values;
-  const requestBody = {
-    email,
-    password,
-    firstName,
-    lastName,
-    username,
-  };
-  const resp = await axios.post("/api/auth/register", requestBody, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (resp.status === 200) {
-    console.log("User registered successfully:", resp.data);
-    message.success("User registered successfully!");
-    // Send verification email
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random OTP
-    const emailData = {
-      name: firstName,
-      email: email,
-      link: `${window.location.origin}/verify-email`,
-      subject: "Verify your email address",
-      message: `Welcome To JobScamShield, In order to complete your registration, please verify your email address.`,
-      userId: resp.data.userId,
-    };
-    const emailResp = await axios.post("/api/send-email", emailData, {
+export const handleRegister = async (values) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/register`, values, {
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    if (emailResp.status === 200) {
-      message.success("Verification email sent successfully!");
+    if (response.data) {
+      // Return user data and indicate email verification is needed
+      return {
+        ...response.data,
+        requiresVerification: true,
+      };
     }
-    // Handle email sending error
-    else {
-      message.error("Error sending verification email.");
+    throw new Error("Registration failed");
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Registration failed");
+    } else {
+      throw new Error("Network error. Please try again.");
     }
-
-    console.log("User registered successfully:", resp.data);
-  } else {
-    console.error("Error registering user:", resp.data);
   }
-  //    router.push("/verify-email"); // Redirect to login page after successful registration
 };
 
 export const handleLogout = async () => {
   try {
-    const resp = await axios.post("/api/auth/logout");
-    if (resp.status === 200) {
-      return true; // Logout successful
-    }
-    return false; // Logout failed
+    await axios.post(`${API_BASE_URL}/logout`);
+    return true;
   } catch (error) {
-    console.error("Error logging out:", error);
+    console.error("Logout error:", error);
+    return false;
+  }
+};
+
+export const handleEmailVerification = async ({ otp, userId }) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/verify-email`, {
+      otp,
+      userId,
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Verification failed");
+    } else {
+      throw new Error("Network error during verification");
+    }
+  }
+};
+
+export const sendVerificationEmail = async (emailData) => {
+  try {
+    const response = await axios.post("/api/send-email", emailData);
+    return response.data;
+  } catch (error) {
+    console.error("Email sending error:", error);
+    throw new Error("Failed to send verification email");
+  }
+};
+
+export const generate2faQrCode = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/2fa/qrcode`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    throw new Error("Failed to generate QR code");
+  }
+};
+
+export const verify2faCode = async (secret, code) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/2fa/verify`,
+      { secret, code },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying 2FA code:", error);
+    throw new Error("Failed to verify 2FA code");
   }
 };

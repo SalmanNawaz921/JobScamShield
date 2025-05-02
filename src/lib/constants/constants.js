@@ -105,7 +105,7 @@ export const verifyEmailFormFields = [
     name: "verificationCode",
     label: "Verification Code",
     type: "otp",
-    placeholder: "Enter the verification code sent to your email",
+    placeholder: "Enter the verification code from your authenticator app",
     required: true,
   },
 ];

@@ -239,6 +239,19 @@ const UserModel = {
     return UserModel.sanitizeUser(user);
   },
 
+  store2FASecret: async (db, userId, secret) => {
+    const user = await firestoreService.update(
+      UserFields.COLLECTION,
+      userId,
+      {
+        twoFactorSecret: secret.twoFactorSecret,
+        twoFactorEnabled: secret.twoFactorEnabled,
+      },
+      db
+    );
+    return UserModel.sanitizeUser(user);
+  },
+
   // Verify password
   verifyPassword: async (db, userId, password) => {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);

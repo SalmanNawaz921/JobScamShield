@@ -1,7 +1,6 @@
 // pages/_app.js
 
 import { UserState } from "@/context/UserContext";
-import "@ant-design/v5-patch-for-react-19";
 import "@/app/globals.css";
 
 function MyApp({ Component, pageProps }) {

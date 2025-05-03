@@ -5,13 +5,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
   try {
-    const { messageId, chatId, sender, content, createdAt } = req.body;
+    const { messageId, data } = req.body;
 
     const message = await MessageModel.update(db, messageId, {
-      chatId,
-      sender,
-      content,
-      createdAt,
+      ...data,
     });
     return res.status(200).json({
       message: "Message updated successfully",

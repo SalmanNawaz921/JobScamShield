@@ -15,6 +15,8 @@ import {
   CloseOutlined,
   CopyOutlined,
 } from "@ant-design/icons";
+import BotResponse from "../BotResponse/BotResponse";
+import TypingIndicator from "../TypingIndicator/TypingIndicator";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -42,12 +44,12 @@ const MessageActions = ({ onEdit, onCopy, onDelete, isSender }) => {
         zIndex: 1,
       }}
     >
-      <Tooltip 
-        title="Edit" 
-        overlayStyle={{ 
+      <Tooltip
+        title="Edit"
+        overlayStyle={{
           backdropFilter: "blur(5px)",
           background: "rgba(0, 0, 0, 0.7)",
-          color: "white"
+          color: "white",
         }}
       >
         <Button
@@ -57,12 +59,12 @@ const MessageActions = ({ onEdit, onCopy, onDelete, isSender }) => {
           size="small"
         />
       </Tooltip>
-      <Tooltip 
+      <Tooltip
         title="Copy"
-        overlayStyle={{ 
+        overlayStyle={{
           backdropFilter: "blur(5px)",
           background: "rgba(0, 0, 0, 0.7)",
-          color: "white"
+          color: "white",
         }}
       >
         <Button
@@ -72,12 +74,12 @@ const MessageActions = ({ onEdit, onCopy, onDelete, isSender }) => {
           size="small"
         />
       </Tooltip>
-      <Tooltip 
+      <Tooltip
         title="Delete"
-        overlayStyle={{ 
+        overlayStyle={{
           backdropFilter: "blur(5px)",
           background: "rgba(0, 0, 0, 0.7)",
-          color: "white"
+          color: "white",
         }}
       >
         <Button
@@ -91,9 +93,10 @@ const MessageActions = ({ onEdit, onCopy, onDelete, isSender }) => {
   );
 };
 
-const Message = ({ message, isSender, onEdit, onDelete }) => {
+const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
+  console.log("Message component rendered with message:", message);
   const [editing, setEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(message.content);
+  const [editedContent, setEditedContent] = useState(message?.content || "");
   const [hovering, setHovering] = useState(false);
   const textAreaRef = useRef(null);
 
@@ -156,19 +159,6 @@ const Message = ({ message, isSender, onEdit, onDelete }) => {
         marginLeft: isSender ? "auto" : "unset",
       }}
     >
-      {/* Avatar for Receiver */}
-      {!isSender && (
-        <Avatar
-          size={36}
-          src={message.userId?.avatar?.url}
-          style={{
-            border: "1px solid #f0f0f0",
-            backgroundColor: "#f5f5f5",
-            flexShrink: 0,
-          }}
-        />
-      )}
-
       {/* Message Content */}
       <div
         style={{
@@ -181,7 +171,7 @@ const Message = ({ message, isSender, onEdit, onDelete }) => {
       >
         {/* Hover Actions */}
         {hovering && !editing && isSender && (
-          <MessageActions 
+          <MessageActions
             onEdit={handleEdit}
             onCopy={handleCopy}
             onDelete={handleDelete}
@@ -204,21 +194,11 @@ const Message = ({ message, isSender, onEdit, onDelete }) => {
             border: editing ? `2px solid ${colors.editBorder}` : "none",
           }}
         >
-          {/* Sender Name */}
-          {!isSender && (
-            <Text
-              strong
-              style={{
-                fontSize: "13px",
-                marginBottom: "4px",
-                display: "block",
-                color: colors.receiverText,
-              }}
-            >
-              {message.userId?.name || "Unknown User"}
-            </Text>
+          {isBotResponding && (
+            <div>
+              <TypingIndicator />
+            </div>
           )}
-
           {/* Message Text or Edit Field */}
           {editing ? (
             <>
@@ -243,7 +223,6 @@ const Message = ({ message, isSender, onEdit, onDelete }) => {
                 style={{
                   fontSize: "14px",
                   display: "block",
-                  marginBottom: message.attachments?.length ? "8px" : "0",
                   color: isSender ? colors.senderText : colors.receiverText,
                   lineHeight: 1.5,
                   whiteSpace: "pre-wrap",
@@ -252,36 +231,8 @@ const Message = ({ message, isSender, onEdit, onDelete }) => {
               >
                 {message.content}
               </Text>
-
-              {/* Attachments */}
-              {message.attachments?.length > 0 && (
-                <div style={{ marginTop: "8px" }}>
-                  {message.attachments.map((file, idx) => (
-                    <a
-                      href={`${file.url}?fl_attachment=${
-                        file.name || "attachment"
-                      }`}
-                      download={file.name}
-                      key={idx}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        color: isSender ? "#e6f7ff" : "#1890ff",
-                        textDecoration: "none",
-                        marginBottom: "4px",
-                        padding: "4px 8px",
-                        backgroundColor: isSender
-                          ? "rgba(255,255,255,0.1)"
-                          : "rgba(24, 144, 255, 0.1)",
-                        borderRadius: "4px",
-                      }}
-                    >
-                      <span>📎</span>
-                      <span>{file.name || "Attachment"}</span>
-                    </a>
-                  ))}
-                </div>
+              {message.responseData && (
+                <BotResponse responseData={message.responseData} />
               )}
             </>
           )}

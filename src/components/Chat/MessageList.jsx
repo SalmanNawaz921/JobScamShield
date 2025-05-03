@@ -5,9 +5,13 @@ import ReusableModal from "../ReusableModal/ReusableModal";
 import Logo from "@/assets/Logo";
 const { Text } = Typography;
 
-const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState(null);
+const MessageList = ({
+  loading,
+  messages,
+  handleDelete,
+  handleSubmitEdit,
+  isBotResponding,
+}) => {
   const containerRef = useRef(null);
 
   // Format date for grouping
@@ -48,12 +52,6 @@ const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
     return acc;
   }, {});
 
-  // Handle message edit
-  const handleEdit = (message) => {
-    setCurrentMessage(message);
-    setIsModalOpen(true);
-  };
-
   // Auto-scroll to bottom
   useEffect(() => {
     if (containerRef.current) {
@@ -61,13 +59,10 @@ const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
     }
   }, [messages]);
 
-  if(!messages || messages.length === 0) {
+  if (!messages || messages.length === 0) {
     console.log("No messages found.");
-    return (
-     <Logo/>
-    );
+    return <Logo />;
   }
-
 
   return (
     <div
@@ -100,12 +95,16 @@ const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
             <List
               dataSource={messages}
               renderItem={(msg) => (
-                <Message
-                  message={msg}
-                  isSender={msg.sender === "user"}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
+                <List.Item key={msg.id || msg.createdAt?.getTime()}>
+                  <Message
+                    message={msg}
+                    isSender={msg.sender === "user"}
+                    sender={msg.sender}
+                    onEdit={handleSubmitEdit}
+                    onDelete={handleDelete}
+                    isBotResponding={isBotResponding}
+                  />
+                </List.Item>
               )}
               style={{
                 marginBottom: "8px",
@@ -126,26 +125,6 @@ const MessageList = ({ loading, messages,handleDelete,handleSubmitEdit }) => {
         >
           No messages in this chat yet.
         </p>
-      )}
-
-      {currentMessage && (
-        <ReusableModal
-          inputs={[
-            {
-              name: "text",
-              label: "Message Text",
-              type: "text",
-              required: true,
-              initialValue: currentMessage.content,
-              placeholder: "Edit your message",
-            },
-          ]}
-          formTitle="Edit Message"
-          buttonText="Save"
-          onSubmit={handleSubmitEdit}
-          setOpen={setIsModalOpen}
-          open={isModalOpen}
-        />
       )}
     </div>
   );

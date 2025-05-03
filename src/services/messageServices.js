@@ -44,12 +44,11 @@ export const getMessages = async (chatId) => {
   }
 };
 
-export const ediMessage = async (userId, messageId, data) => {
+export const ediMessage = async (messageId, data) => {
   try {
     const messageResponse = await axios.put(
       "/api/messages/edit",
       {
-        userId,
         messageId,
         data,
       },

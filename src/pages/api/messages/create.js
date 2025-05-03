@@ -5,13 +5,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
   try {
-    const { chatId, sender, content, createdAt } = req.body;
+    const { chatId, sender, content, responseData, createdAt } = req.body;
 
     const message = await MessageModel.create(db, {
       chatId,
       sender,
       content,
       createdAt,
+      responseData,
     });
     return res.status(200).json({
       message: "Message created successfully",

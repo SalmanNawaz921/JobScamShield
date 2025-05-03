@@ -8,7 +8,8 @@ const MessageFields = {
   FIELDS: {
     chatId: { type: "string", required: true },
     sender: { type: "string", required: true, enum: ["user", "bot"] },
-    content: { type: "string", required: true },
+    content: { type: "string", required: false },
+    responseData: { type: "array", required: false },
     createdAt: { type: "timestamp", default: () => new Date() },
   },
 };
@@ -79,7 +80,7 @@ const MessageModel = {
       limit,
       startAfter
     );
-    return messages.docs
+    return messages.docs;
   },
 
   // Delete message
@@ -110,13 +111,13 @@ const MessageModel = {
       {}
     );
 
-    await firestoreService.update(
+    const message = await firestoreService.update(
       MessageFields.COLLECTION,
       messageId,
       messageData,
       db
     );
-    return true;
+    return message;
   },
 };
 

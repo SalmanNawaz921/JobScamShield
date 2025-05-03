@@ -109,8 +109,11 @@ export default function DashboardLayout({ children }) {
             backgroundColor: "#111827",
             borderRight: "1px solid rgba(255,255,255,0.1)",
             height: "100vh",
-            overflow: "auto",
+            overflow: "auto", // scroll inside sidebar
+            position: "sticky",
+            top: 0,
           }}
+          
         >
           <SideBar />
         </Sider>

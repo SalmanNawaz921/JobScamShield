@@ -21,8 +21,22 @@ export default async function handler(req, res) {
   }
 
   if (user.twoFactorEnabled) {
-    return res.status(403).json({ message: "2FA is enabled" });
+    // ✅ Set a short-lived twofa_pending cookie
+    const twofaCookie = serialize("twofa_pending", "true", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 5, // 5 minutes
+      path: "/",
+    });
+    res.setHeader("Set-Cookie", twofaCookie);
+
+    return res.status(200).json({
+      requires2FA: true,
+      user: { id: user.id },
+      message: "2FA verification required",
+    });
   }
+
   // Generate a QR code for 2FA setup
   const token = generateToken(user);
   const cookie = serialize("token", token, {

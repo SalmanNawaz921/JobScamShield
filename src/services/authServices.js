@@ -12,7 +12,7 @@ export const handleLogin = async (values) => {
       },
     });
 
-    return response.data.user;
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
@@ -114,5 +114,23 @@ export const verify2faCode = async (secret, code) => {
   } catch (error) {
     console.error("Error verifying 2FA code:", error);
     throw new Error("Failed to verify 2FA code");
+  }
+};
+
+export const verify2faLoginCode = async (userId, code) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/2fa/verify-two-fa-login`,
+      { userId, code },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying 2FA login code:", error);
+    throw new Error("Failed to verify 2FA login code");
   }
 };

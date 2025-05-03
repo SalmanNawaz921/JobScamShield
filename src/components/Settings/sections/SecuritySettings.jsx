@@ -1,5 +1,7 @@
 import TwoFactorModal from "@/components/TwoFactorModal/TwoFactorModal";
+import { useUserContext } from "@/context/UserContext";
 import { Button, Divider, Switch } from "antd";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const securitySections = [
@@ -25,21 +27,32 @@ const securitySections = [
 ];
 
 const SecuritySettings = () => {
-  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
+  const { userData } = useUserContext();
+  const  router  = useRouter();
+  const twoFAEnabled = userData?.twoFactorEnabled || false;
+  const handletwoFAChange = () => {
+    if (!twoFAEnabled) {
+     router.push("/account/two-factor-authentication");
+    }
+  };
   return (
     <div>
       {securitySections.map((section, index) => (
         <div key={index} className="">
           <h3>{section.title}</h3>
           <p className="my-2">{section.description}</p>
-          {/* <Button type={section.button.type} danger={section.button.danger}>
-            {section.button.label}
-          </Button> */}
-          <Switch onChange={() => setTwoFAEnabled((prevState) => !prevState)} />
+          <Button
+            type={section.button.type}
+            danger={twoFAEnabled ? true : section.button.danger}
+            onClick={handletwoFAChange}
+          >
+            {twoFAEnabled ? "Disable" : section.button.label}
+          </Button>
+          {/* <Switch onChange={() => setTwoFAEnabled((prevState) => !prevState)} /> */}
           {index !== securitySections.length - 1 && <Divider />}
         </div>
       ))}
-      {twoFAEnabled && <TwoFactorModal />}
+      {/* {twoFAEnabled && <TwoFactorModal />} */}
     </div>
   );
 };

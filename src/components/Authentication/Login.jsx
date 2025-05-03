@@ -4,23 +4,28 @@ import { AuthTemplate } from "./AuthTemplate";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 import { handleLogin } from "@/services/authServices";
+import { useUserContext } from "@/context/UserContext";
 
 const Login = () => {
   const router = useRouter();
+  const {setUserData} = useUserContext();
   const onLogin = async (values) => {
     try {
-      const user = await handleLogin(values);
-      if (!user) {
+      const userData = await handleLogin(values);
+      if (!userData.user) {
         message.error("Invalid email or password");
+        return;
+      } else if (userData.requires2FA) {
+        message.success("2FA verification required!");
+        setUserData(userData.user);
+        router.push(`/account/verify-otp`);
         return;
       }
       message.success("Login successful!");
-      router.push(`/user/${user.username}/dashboard`);
+      router.push(`/user/${userData.user.username}/dashboard`);
     } catch (error) {
       console.error("Login error:", error);
-      message.error(
-        error.message || "Invalid email or password"
-      );
+      message.error(error.message || "Invalid email or password");
     }
   };
   return (

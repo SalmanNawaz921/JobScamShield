@@ -1,6 +1,12 @@
 /* src/styles/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Onest:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Onest:wght@100..900&display=swap");
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply !bg-gradient-to-br from-gray-900 to-gray-800;
+
+  @apply text-gray-200;
+}

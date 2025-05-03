@@ -18,7 +18,6 @@ export const UserState = ({ children }) => {
           return;
         }
         const { userData } = verifiedData;
-        console.log("User data:", userData);
         setUserData(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);

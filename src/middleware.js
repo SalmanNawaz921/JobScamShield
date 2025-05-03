@@ -29,14 +29,18 @@ export async function middleware(req) {
     "/salespage",
   ];
   const isPublicRoute = publicRoutes.includes(pathname);
-
+  const is2FAPending = req.cookies.get("twofa_pending")?.value === "true";
+  if (is2FAPending && pathname.startsWith("/account/verify-otp")) {
+    return NextResponse.next();
+  }
+  
   // Handle public routes
   if (isPublicRoute) {
     return NextResponse.next();
   }
 
   // If no token and not public route → redirect to login
-  if (!token) {
+  if (!token  ) {
     console.log("No token found, redirecting to login");
     return NextResponse.redirect(new URL("/login", origin));
   }

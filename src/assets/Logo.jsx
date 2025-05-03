@@ -1,7 +1,16 @@
-import { bgColor, borderRadius, flex, font, shadow, spacing, textColor, textSize } from "@/app/theme/tailwind.theme";
+import {
+  bgColor,
+  borderRadius,
+  flex,
+  font,
+  shadow,
+  spacing,
+  textColor,
+  textSize,
+} from "@/app/theme/tailwind.theme";
 import { LockKeyhole } from "lucide-react";
 
-const Logo = () => {
+const Logo = ({ title, description }) => {
   return (
     <div className="text-center">
       <div className={flex.center}>
@@ -14,10 +23,14 @@ const Logo = () => {
       <h2
         className={`${spacing.mt6} ${textSize.xl} ${font.bold} ${textColor.primary}`}
       >
-        JobScamShield
+        {title ? title : "JobScamShield"}
       </h2>
-      <p className={`${spacing.mt2} ${textSize.sm} ${textColor.secondary} mb-8`}>
-        Protect yourself from fraudulent job postings
+      <p
+        className={`${spacing.mt2} ${textSize.sm} ${textColor.secondary} mb-8`}
+      >
+        {description
+          ? description
+          : "Protect yourself from fraudulent job postings"}
       </p>
     </div>
   );

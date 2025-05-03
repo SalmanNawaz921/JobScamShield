@@ -114,7 +114,7 @@ const SideBar = () => {
   const { userData: user } = useUserContext();
   const [expandedGroups, setExpandedGroups] = useState({});
   const { groupedChats, createChat, renameChat, deleteChat } = useChat();
-
+  console.log(user)
   const toggleGroup = (date) => {
     setExpandedGroups((prev) => ({
       ...prev,

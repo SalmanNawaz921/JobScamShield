@@ -9,7 +9,7 @@ const verify2FAHandler = async (req, res) => {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  //   try {
+    try {
   const { secret, code } = req.body;
   if (!secret || !code) {
     return res.status(400).json({
@@ -24,7 +24,7 @@ const verify2FAHandler = async (req, res) => {
       secret: secret,
       encoding: "base32",
       token: code,
-      // window: 2 // Allows 2 time-steps tolerance
+      window: 2 // Allows 2 time-steps tolerance
     });
 
     return res.json({ verified });
@@ -37,9 +37,7 @@ const verify2FAHandler = async (req, res) => {
     token: code,
     window: 2,
   });
-  console.log("2FA code verification result:", verified);
   if (verified) {
-    console.log("2FA code verified successfully, enabling 2FA...");
     await UserModel.store2FASecret(db,req.user.id, {
       twoFactorEnabled: true,
       twoFactorSecret: secret,
@@ -55,12 +53,12 @@ const verify2FAHandler = async (req, res) => {
     message: "Invalid verification code",
   });
 
-  //   } catch (error) {
-  //     console.error('2FA verification error:', error);
-  //     return res.status(500).json({
-  //       message: 'Internal server error during verification'
-  //     });
-  //   }
+    } catch (error) {
+      console.error('2FA verification error:', error);
+      return res.status(500).json({
+        message: 'Internal server error during verification'
+      });
+    }
 };
 
 export default authMiddleware(verify2FAHandler);

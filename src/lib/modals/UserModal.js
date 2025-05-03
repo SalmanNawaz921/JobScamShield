@@ -258,6 +258,19 @@ const UserModel = {
     if (!user || !user.password) return false;
     return await bcrypt.compare(password, user.password);
   },
+
+  // Delete user
+  delete: async (db, userId) => {
+    await firestoreService.delete(UserFields.COLLECTION, userId, db);
+  },
+
+  //get twoFactorSecret
+
+  getTwoFactorSecret: async (db, userId) => {
+    const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
+    if (!user || !user.twoFactorSecret) return null;
+    return user.twoFactorSecret;
+  },
 };
 
 export default UserModel;

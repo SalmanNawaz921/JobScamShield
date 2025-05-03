@@ -6,6 +6,7 @@ const ChatFields = {
   COLLECTION: "chats",
   FIELDS: {
     userId: { type: "string", required: true },
+    title: { type: "string", default: "" },
     startedAt: { type: "timestamp", default: () => new Date() },
     endedAt: { type: "timestamp", default: null },
     durationMinutes: { type: "number", default: 0 }, // system-calculated
@@ -46,8 +47,7 @@ const ChatModel = {
     //     "You have reached the maximum number of chats for your plan."
     //   );
     // }
-    console.log("Creating chat for user:", userId);
-    return await firestoreService.add(
+    const ref = await firestoreService.add(
       ChatFields.COLLECTION,
       {
         userId,
@@ -56,6 +56,12 @@ const ChatModel = {
       },
       db
     );
+    const newChat = await firestoreService.get(
+      ChatFields.COLLECTION,
+      ref.id,
+      db
+    );
+    return newChat;
   },
 
   endChat: async (db, chatId) => {
@@ -99,12 +105,13 @@ const ChatModel = {
     const chat = await firestoreService.get(ChatFields.COLLECTION, chatId, db);
     if (!chat) throw new Error("Chat not found");
 
-    return await firestoreService.update(
+    await firestoreService.update(ChatFields.COLLECTION, chatId, data, db);
+    const updatedChat = await firestoreService.get(
       ChatFields.COLLECTION,
       chatId,
-      data,
       db
     );
+    return updatedChat;
   },
 
   getAllChats: async (db, userId) => {

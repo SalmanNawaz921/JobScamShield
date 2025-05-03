@@ -2,11 +2,11 @@ import UserModel from "@/lib/modals/UserModal";
 import { db } from "@/lib/config/firebaseConfig";
 import ChatModel from "@/lib/modals/ChatModal";
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
   }
   try {
-    const { userId } = req.body;
+    const { userId } = req.query;
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }

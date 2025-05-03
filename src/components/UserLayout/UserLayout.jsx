@@ -82,7 +82,7 @@ import SideBar from "@/components/Sidebar/Sidebar";
 import Navbar from "@/components/Navbar/Navbar";
 import { useUserContext } from "@/context/UserContext";
 import { useEffect, useState } from "react";
-
+import { CloseOutlined } from "@ant-design/icons";
 const { Header, Sider, Content, Footer } = Layout;
 
 export default function DashboardLayout({ children }) {
@@ -113,7 +113,6 @@ export default function DashboardLayout({ children }) {
             position: "sticky",
             top: 0,
           }}
-          
         >
           <SideBar />
         </Sider>
@@ -127,7 +126,12 @@ export default function DashboardLayout({ children }) {
           width={260}
           onClose={() => setMenuOpen(false)}
           closable
+          closeIcon={
+            <CloseOutlined style={{ color: "white", fontSize: "18px" }} />
+          }
           bodyStyle={{ padding: 0, backgroundColor: "#111827", color: "white" }}
+          styles={{ header: { backgroundColor: "#111827", color: "white" } }}
+          className="!bg-[#111827]"
         >
           <SideBar setMenuOpen={setMenuOpen} />
         </Drawer>

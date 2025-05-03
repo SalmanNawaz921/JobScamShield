@@ -12,6 +12,7 @@
 //   const [messages, setMessages] = useState([]);
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState(null);
+
 //   // Fetch all messages using the service function
 //   const fetchMessages = async () => {
 //     if (!user?.id) return;
@@ -34,67 +35,73 @@
 //   const createMessage = async (data) => {
 //     if (!user?.id) return;
 
-//     setLoading(true);
-//     setError(null);
+//     // Optimistic update
+//     const tempId = Date.now(); // Temporary ID for optimistic update
+//     const optimisticMessage = { ...data, id: tempId };
+//     setMessages((prev) => [...prev, optimisticMessage]);
 
 //     try {
 //       const newMessage = await createMessageService(data);
-//       setMessages((prev) => [...prev, newMessage]);
+//       // Replace the optimistic message with the actual one from server
+//       setMessages((prev) =>
+//         prev.map((msg) => (msg.id === tempId ? newMessage : msg))
+//       );
 //       return newMessage;
 //     } catch (err) {
+//       // Rollback on error
+//       setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
 //       setError(err.message);
 //       console.error("Error creating message:", err);
 //       throw err;
-//     } finally {
-//       setLoading(false);
 //     }
 //   };
 
 //   const editMessage = async (data) => {
 //     if (!user?.id) return;
 
-//     setLoading(true);
-//     setError(null);
+//     // Optimistic update
+//     setMessages((prev) =>
+//       prev.map((msg) => (msg.id === data.id ? { ...msg, ...data } : msg))
+//     );
 
 //     try {
 //       const updatedMessage = await editMessageService(data.id, data);
+//       // Ensure we have the latest server state
 //       setMessages((prev) =>
-//         prev.map((message) =>
-//           message.id === data.id ? updatedMessage : message
-//         )
+//         prev.map((msg) => (msg.id === data.id ? updatedMessage : msg))
 //       );
 //       return updatedMessage;
 //     } catch (err) {
+//       // On error, refetch to ensure state consistency
+//       fetchMessages();
 //       setError(err.message);
 //       console.error("Error editing message:", err);
 //       throw err;
-//     } finally {
-//       setLoading(false);
 //     }
 //   };
 
 //   const deleteMessage = async (messageId) => {
 //     if (!user?.id) return;
 
-//     setLoading(true);
-//     setError(null);
+//     // Optimistic update
+//     const deletedMessage = messages.find((msg) => msg.id === messageId);
+//     setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
 
 //     try {
 //       await deleteMsg(messageId);
-//       setMessages((prev) => prev.filter((message) => message.id !== messageId));
 //     } catch (err) {
+//       // Rollback on error
+//       setMessages((prev) => [...prev, deletedMessage]);
 //       setError(err.message);
 //       console.error("Error deleting message:", err);
 //       throw err;
-//     } finally {
-//       setLoading(false);
 //     }
 //   };
 
 //   // Initialize
 //   useEffect(() => {
 //     fetchMessages();
-//   }, [user?.id]);
+//   }, [user?.id, chatId]); // Added chatId to dependency array
 
 //   return {
 //     messages,
@@ -104,6 +111,7 @@
 //     editMessage,
 //     deleteMessage,
 //     setMessages,
+//     fetchMessages, // Expose fetchMessages in case needed
 //   };
 // };
 
@@ -115,23 +123,45 @@ import {
   deleteMessage as deleteMsg,
   ediMessage as editMessageService,
 } from "@/services/messageServices";
+import {
+  getBotResponses,
+  addBotResponse,
+} from "@/services/botResponseServices"; // NEW
 
 export const useMessage = ({ chatId }) => {
   const { userData: user } = useUserContext();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // user + bot threaded
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all messages using the service function
+  // Combine user messages with their bot responses
   const fetchMessages = async () => {
-    if (!user?.id) return;
+    if (!user?.id || !chatId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const messagesData = await getMessages(chatId);
-      setMessages(messagesData);
+      const userMsgs = await getMessages(chatId); // USER MESSAGES
+      const botMsgs = await getBotResponses(chatId); // BOT RESPONSES
+      console.log(userMsgs, "userMsgs");
+      console.log(botMsgs, "botMsgs");
+      // Group bot responses by user message ID
+      const responseMap = {};
+      for (let bot of botMsgs) {
+        const parentId = bot.responseTo;
+        if (!responseMap[parentId]) responseMap[parentId] = [];
+        responseMap[parentId].push(bot);
+      }
+
+      // Thread messages (user + bot under it)
+      const threaded = userMsgs.map((msg) => ({
+        ...msg,
+        botResponses: responseMap[msg.id] || [],
+      }));
+
+      console.log(threaded, "threaded messages");
+      setMessages(threaded);
     } catch (err) {
       setError(err.message);
       console.error("Error fetching messages:", err);
@@ -140,24 +170,26 @@ export const useMessage = ({ chatId }) => {
     }
   };
 
-  // Create message using the service function
+  // Create new user message
   const createMessage = async (data) => {
     if (!user?.id) return;
 
-    // Optimistic update
-    const tempId = Date.now(); // Temporary ID for optimistic update
-    const optimisticMessage = { ...data, id: tempId };
-    setMessages((prev) => [...prev, optimisticMessage]);
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = { ...data, id: tempId, botResponses: [] };
+
+    setMessages((prev) => [...prev, optimisticMsg]);
 
     try {
-      const newMessage = await createMessageService(data);
-      // Replace the optimistic message with the actual one from server
+      const newMsg = await createMessageService(data);
+
       setMessages((prev) =>
-        prev.map((msg) => (msg.id === tempId ? newMessage : msg))
+        prev.map((msg) =>
+          msg.id === tempId ? { ...newMsg, botResponses: [] } : msg
+        )
       );
-      return newMessage;
+
+      return newMsg;
     } catch (err) {
-      // Rollback on error
       setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
       setError(err.message);
       console.error("Error creating message:", err);
@@ -165,61 +197,82 @@ export const useMessage = ({ chatId }) => {
     }
   };
 
+  // (Optional) Add bot response manually
+  const createBotResponse = async (responseData) => {
+    try {
+      const newResponse = await addBotResponse(responseData);
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === newResponse.responseTo
+            ? {
+                ...msg,
+                botResponses: [...(msg.botResponses || []), newResponse],
+              }
+            : msg
+        )
+      );
+    } catch (err) {
+      console.error("Error adding bot response:", err);
+      throw err;
+    }
+  };
+
+  // Edit user message
   const editMessage = async (data) => {
     if (!user?.id) return;
 
-    // Optimistic update
     setMessages((prev) =>
       prev.map((msg) => (msg.id === data.id ? { ...msg, ...data } : msg))
     );
 
     try {
-      const updatedMessage = await editMessageService(data.id, data);
-      // Ensure we have the latest server state
+      const updated = await editMessageService(data.id, data);
       setMessages((prev) =>
-        prev.map((msg) => (msg.id === data.id ? updatedMessage : msg))
+        prev.map((msg) =>
+          msg.id === data.id
+            ? { ...updated, botResponses: msg.botResponses }
+            : msg
+        )
       );
-      return updatedMessage;
     } catch (err) {
-      // On error, refetch to ensure state consistency
-      fetchMessages();
+      await fetchMessages(); // fallback to latest state
       setError(err.message);
       console.error("Error editing message:", err);
       throw err;
     }
   };
 
-  const deleteMessage = async (messageId) => {
+  // Delete user message
+  const deleteMessage = async (id) => {
     if (!user?.id) return;
 
-    // Optimistic update
-    const deletedMessage = messages.find((msg) => msg.id === messageId);
-    setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
+    const deleted = messages.find((msg) => msg.id === id);
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
 
     try {
-      await deleteMsg(messageId);
+      await deleteMsg(id);
     } catch (err) {
-      // Rollback on error
-      setMessages((prev) => [...prev, deletedMessage]);
+      setMessages((prev) => [...prev, deleted]);
       setError(err.message);
       console.error("Error deleting message:", err);
       throw err;
     }
   };
 
-  // Initialize
   useEffect(() => {
     fetchMessages();
-  }, [user?.id, chatId]); // Added chatId to dependency array
+  }, [user?.id, chatId]);
 
   return {
     messages,
     loading,
     error,
     createMessage,
+    createBotResponse, // (optional for testing)
     editMessage,
     deleteMessage,
     setMessages,
-    fetchMessages, // Expose fetchMessages in case needed
+    fetchMessages,
   };
 };

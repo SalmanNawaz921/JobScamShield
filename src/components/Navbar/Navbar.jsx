@@ -60,11 +60,12 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
     <div className="flex items-center px-4 py-2 w-full">
       {/* Burger Menu Button - Mobile */}
       {mobile && (
-        <Button
-          icon={<MenuOutlined />}
+        <button
           onClick={() => setIsMenuOpen((prevState) => !prevState)}
-          className="flex-shrink-0 bg-purple-600 text-white rounded-lg shadow-md"
-        />
+          className="flex items-center justify-center h-10 w-10 flex-shrink-0 backdrop-blur-lg bg-[#171d2b]/50 border border-white/20 text-white rounded-xl shadow-lg hover:bg-[#171d2b]/70 transition duration-300 cursor-pointer"
+        >
+          <MenuOutlined className="text-xl" />
+        </button>
       )}
 
       {/* Profile Button - Right */}

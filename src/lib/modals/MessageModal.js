@@ -9,7 +9,6 @@ const MessageFields = {
     chatId: { type: "string", required: true },
     sender: { type: "string", required: true, enum: ["user", "bot"] },
     content: { type: "string", required: false },
-    responseData: { type: "array", required: false },
     createdAt: { type: "timestamp", default: () => new Date() },
   },
 };

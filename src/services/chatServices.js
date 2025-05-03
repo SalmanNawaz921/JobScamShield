@@ -22,10 +22,12 @@ export const addChat = async (userId) => {
 
 export const getChats = async (userId) => {
   try {
-    const chatResponse = await axios.post(
-      "/api/chats/get-chats",
+    const chatResponse = await axios.get(
+      `/api/chats/get-chats`,
       {
-        userId,
+        params: {
+          userId,
+        },
       },
       {
         withCredentials: true,
@@ -40,12 +42,11 @@ export const getChats = async (userId) => {
   }
 };
 
-export const ediChat = async (userId, chatId, data) => {
+export const ediChat = async (chatId, data) => {
   try {
-    const chatResponse = await axios.post(
+    const chatResponse = await axios.put(
       "/api/chats/edit-chat",
       {
-        userId,
         chatId,
         data,
       },
@@ -62,9 +63,9 @@ export const ediChat = async (userId, chatId, data) => {
   }
 };
 
-export const deleteChat = async (userId, chatId) => {
+export const deleteChat = async (chatId) => {
   try {
-    const chatResponse = await axios.post(
+    const chatResponse = await axios.delete(
       "/api/chats/delete-chat",
       {
         userId,

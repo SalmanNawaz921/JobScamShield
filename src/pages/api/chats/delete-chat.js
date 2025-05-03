@@ -5,24 +5,18 @@ export default async function handler(req, res) {
   if (req.method !== "DELETE") {
     return res.status(405).json({ message: "Method not allowed" });
   }
+  const { token } = req.cookies;
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
   try {
-    const { userId, chatId } = req.body;
-    if (!userId || !chatId) {
-      return res
-        .status(400)
-        .json({ message: "User ID and Chat ID are required" });
-    }
-    const user = await UserModel.getById(db, userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const { chatId } = req.body;
+    if (!chatId) {
+      return res.status(400).json({ message: " Chat ID is required" });
     }
     const chat = await ChatModel.deleteChat(db, chatId);
     return res.status(200).json({
-      chat: {
-        id: chat.id,
-        userId: chat.userId,
-        startedAt: chat.startedAt,
-      },
+      chat,
     });
   } catch (error) {
     console.error("Error creating chat:", error);

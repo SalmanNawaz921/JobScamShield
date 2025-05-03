@@ -17,84 +17,40 @@ import {
 } from "@ant-design/icons";
 import BotResponse from "../BotResponse/BotResponse";
 import TypingIndicator from "../TypingIndicator/TypingIndicator";
+import MessageActions from "./MessageActions";
 
 const { Text } = Typography;
 const { TextArea } = Input;
 
-// Separate component for action buttons
-const MessageActions = ({ onEdit, onCopy, onDelete, isSender }) => {
-  const colors = {
-    senderBg: "#1890ff",
-    senderText: "#ffffff",
-  };
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: -8,
-        right: isSender ? "unset" : 8,
-        left: isSender ? 8 : "unset",
-        display: "flex",
-        gap: 4,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        padding: "4px 6px",
-        borderRadius: "12px",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-        zIndex: 1,
-      }}
-    >
-      <Tooltip
-        title="Edit"
-        overlayStyle={{
-          backdropFilter: "blur(5px)",
-          background: "rgba(0, 0, 0, 0.7)",
-          color: "white",
-        }}
-      >
-        <Button
-          type="text"
-          icon={<EditOutlined style={{ fontSize: 14 }} />}
-          onClick={onEdit}
-          size="small"
-        />
-      </Tooltip>
-      <Tooltip
-        title="Copy"
-        overlayStyle={{
-          backdropFilter: "blur(5px)",
-          background: "rgba(0, 0, 0, 0.7)",
-          color: "white",
-        }}
-      >
-        <Button
-          type="text"
-          icon={<CopyOutlined style={{ fontSize: 14 }} />}
-          onClick={onCopy}
-          size="small"
-        />
-      </Tooltip>
-      <Tooltip
-        title="Delete"
-        overlayStyle={{
-          backdropFilter: "blur(5px)",
-          background: "rgba(0, 0, 0, 0.7)",
-          color: "white",
-        }}
-      >
-        <Button
-          type="text"
-          icon={<DeleteOutlined style={{ fontSize: 14 }} />}
-          onClick={onDelete}
-          size="small"
-        />
-      </Tooltip>
-    </div>
-  );
+const glassStyles = {
+  common: {
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+    padding: "14px 18px",
+    wordBreak: "break-word",
+    display: "inline-block",
+    transition: "all 0.3s ease",
+    backdropClip: "padding-box",
+  },
+  sender: {
+    background: "rgba(24, 144, 255, 0.15)",
+    color: "#ffffff",
+    borderRadius: "18px 4px 18px 18px",
+    border: "1px solid rgba(24, 144, 255, 0.4)",
+  },
+  receiver: {
+    background: "rgba(255, 255, 255, 0.05)",
+    color: "#e0e0e0",
+    borderRadius: "4px 18px 18px 18px",
+    border: "1px solid rgba(255,255,255,0.15)",
+  },
+  editing: {
+    border: "2px solid #52c41a",
+  },
 };
 
 const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
-  console.log("Message component rendered with message:", message);
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message?.content || "");
   const [hovering, setHovering] = useState(false);
@@ -118,7 +74,7 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
   };
 
   const handleCancelEdit = () => {
-    setEditedContent(message.content);
+    setEditedContent(message?.content);
     setEditing(false);
   };
 
@@ -129,12 +85,12 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
       okText: "Delete",
       okType: "danger",
       cancelText: "Cancel",
-      onOk: () => onDelete(message._id),
+      onOk: () => onDelete(message?.id),
     });
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(message.content);
+    navigator.clipboard.writeText(message?.content);
     antdMessage.success("Message copied!");
   };
 
@@ -176,22 +132,16 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
             onCopy={handleCopy}
             onDelete={handleDelete}
             isSender={isSender}
+            sender={message?.sender}
           />
         )}
 
         {/* Message Bubble */}
         <div
           style={{
-            background: isSender ? colors.senderBg : colors.receiverBg,
-            color: isSender ? colors.senderText : colors.receiverText,
-            borderRadius: isSender
-              ? "18px 4px 18px 18px"
-              : "4px 18px 18px 18px",
-            boxShadow: colors.cardShadow,
-            padding: "12px 16px",
-            wordBreak: "break-word",
-            display: "inline-block",
-            border: editing ? `2px solid ${colors.editBorder}` : "none",
+            ...glassStyles.common,
+            ...(isSender ? glassStyles.sender : glassStyles.receiver),
+            ...(editing ? glassStyles.editing : {}),
           }}
         >
           {isBotResponding && (
@@ -229,14 +179,16 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
                   wordWrap: "break-word",
                 }}
               >
-                {message.content}
+                {message?.content}
               </Text>
-              {message.responseData && (
-                <BotResponse responseData={message.responseData} />
+              {message?.responseData && (
+                <BotResponse
+                  responseData={message?.responseData}
+                  sender="bot"
+                />
               )}
             </>
           )}
-
           {/* Timestamp */}
           <Text
             style={{
@@ -247,7 +199,7 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
               marginTop: "4px",
             }}
           >
-            {new Date(message.createdAt).toLocaleTimeString([], {
+            {new Date(message?.createdAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}

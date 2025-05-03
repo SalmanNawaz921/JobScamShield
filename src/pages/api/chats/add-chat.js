@@ -15,13 +15,8 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
     const chat = await ChatModel.create(db, userId);
-    console.log(chat)
     return res.status(200).json({
-      chat: {
-        id: chat.id,
-        userId: chat.userId,
-        startedAt: chat.startedAt,
-      },
+      chat,
     });
   } catch (error) {
     console.error("Error creating chat:", error);

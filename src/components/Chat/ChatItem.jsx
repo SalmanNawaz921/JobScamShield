@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(chat.title || `Chat ${chat.id}`);
+  const [editedTitle, setEditedTitle] = useState(
+    chat.title || `Chat ${chat.id}`
+  );
   const inputRef = useRef(null);
   const router = useRouter();
 
@@ -31,7 +33,9 @@ export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
+    console.log("Renaming chat to:", editedTitle);
     if (editedTitle.trim() && editedTitle !== chat.title) {
+      console.log("Renaming chat to:", editedTitle);
       onRename(chat.id, editedTitle);
     }
     setIsEditing(false);
@@ -52,7 +56,10 @@ export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
   return (
     <div className="group relative">
       {isEditing ? (
-        <form onSubmit={handleEditSubmit} className="flex items-center px-3 py-2">
+        <form
+          onSubmit={handleEditSubmit}
+          className="flex items-center px-3 py-2"
+        >
           <input
             ref={inputRef}
             type="text"
@@ -63,12 +70,14 @@ export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
           />
           <button
             type="submit"
+            onMouseDown={(e) => e.preventDefault()}
             className="p-1 text-green-600 hover:bg-gray-100 rounded"
           >
             <Check size={16} />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleEditCancel}
             className="p-1 text-red-600 hover:bg-gray-100 rounded"
           >
@@ -79,13 +88,13 @@ export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
         <>
           <Link
             href={`/user/${username}/c/${chat.id}`}
-            className={`flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-gray-100 ${
-              isActive ? "bg-gray-200 font-medium" : "text-gray-700"
+            className={`flex items-center justify-between px-3 py-2 text-sm rounded-md !text-gray-200 hover:bg-gray-100 ${
+              isActive ? "!bg-gray-700 font-medium" : "!text-gray-300"
             }`}
           >
             <span className="truncate flex-1">{editedTitle}</span>
-            
-            <button 
+
+            <button
               onClick={handleMenuToggle}
               className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-gray-200"
             >

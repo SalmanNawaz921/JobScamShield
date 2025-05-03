@@ -15,7 +15,7 @@ export const ChatMenu = ({
       {Object.entries(groupedChats).map(([date, dateChats]) => (
         <div key={date} className="mb-4">
           <div
-            className="flex items-center justify-between px-2 py-3 text-sm font-medium text-gray-500 cursor-pointer hover:bg-gray-100 rounded"
+            className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-300 cursor-pointer hover:bg-gray-700 rounded-lg transition-all duration-300 ease-in-out"
             onClick={() => onToggleGroup(date)}
           >
             <span>{date}</span>
@@ -27,7 +27,7 @@ export const ChatMenu = ({
           </div>
 
           {expandedGroups[date] && (
-            <div className="mt-1 space-y-1">
+            <div className="mt-2 space-y-1">
               {dateChats.map((chat) => (
                 <ChatItem
                   key={chat.id}

@@ -99,7 +99,6 @@
 
 // export default SideBar;
 
-
 // components/Sidebar/Sidebar.jsx
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -107,14 +106,14 @@ import { MessageCirclePlus } from "lucide-react";
 import { useUserContext } from "@/context/UserContext";
 import { useChat } from "@/hooks/useChats";
 import { ChatMenu } from "../Chat/ChatMenu";
+import Logo from "@/assets/Logo";
 
 const SideBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { userData: user } = useUserContext();
   const [expandedGroups, setExpandedGroups] = useState({});
-  const { groupedChats, createChat, renameChat, deleteChat } = useChat();
-  console.log(user)
+  const { groupedChats, createChat, editChat, deleteChat, loading } = useChat();
   const toggleGroup = (date) => {
     setExpandedGroups((prev) => ({
       ...prev,
@@ -133,10 +132,10 @@ const SideBar = () => {
     }
   };
 
-  const handleRenameChat = async (chatId) => {
-    const newName = prompt("Enter new chat name:");
+  const handleRenameChat = async (chatId, newName) => {
+    console.log("Renaming chat:", chatId, newName);
     if (newName) {
-      await renameChat(chatId, newName);
+      await editChat(chatId, newName);
     }
   };
 
@@ -148,23 +147,32 @@ const SideBar = () => {
 
   return (
     <div className="flex flex-col h-full w-64">
+      <div className="px-4 py-2 mt-8">
+        <Logo description=" " />
+      </div>
       <button
         onClick={handleNewChat}
-        className="flex items-center gap-3 rounded-lg m-4 p-3 hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-3 rounded-lg m-4 p-3 hover:bg-gray-700 transition-colors cursor-pointer"
       >
         <MessageCirclePlus size={20} />
         <span>New Chat</span>
       </button>
 
-      <ChatMenu
-        groupedChats={groupedChats}
-        expandedGroups={expandedGroups}
-        onToggleGroup={toggleGroup}
-        pathname={pathname}
-        username={user?.username}
-        onRenameChat={handleRenameChat}
-        onDeleteChat={handleDeleteChat}
-      />
+      {loading ? (
+        <div className="flex items-center justify-center h-full">
+          Loading...
+        </div>
+      ) : (
+        <ChatMenu
+          groupedChats={groupedChats}
+          expandedGroups={expandedGroups}
+          onToggleGroup={toggleGroup}
+          pathname={pathname}
+          username={user?.username}
+          onRenameChat={handleRenameChat}
+          onDeleteChat={handleDeleteChat}
+        />
+      )}
 
       <div className="p-4 border-t min-w-full border-gray-200">
         <div className="flex items-center gap-2">

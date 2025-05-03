@@ -1,7 +1,7 @@
 // pages/_app.js
 
 import { UserState } from "@/context/UserContext";
-import "@/app/globals.css";
+import "../app/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (

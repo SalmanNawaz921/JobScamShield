@@ -22,14 +22,18 @@ const Login = () => {
         return;
       } else if (userData.emailVerified === false) {
         message.error("Email not verified. Please check your inbox.");
-        
+
         return;
       }
       message.success("Login successful!");
       router.push(`/user/${userData.user.username}/dashboard`);
     } catch (error) {
       console.error("Login error:", error);
-      message.error(error.message || "Invalid email or password");
+      message.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Invalid email or password"
+      );
     }
   };
   return (

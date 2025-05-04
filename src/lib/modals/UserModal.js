@@ -28,6 +28,9 @@ const UserFields = {
     twoFactorSecret: { type: "string", private: true, default: null },
     resetPasswordToken: { type: "string", private: true, default: null },
     resetPasswordTokenExpiry: { type: "timestamp", default: null },
+    loginAttempts: { type: "number", default: 0 },
+    lockUntil: { type: "timestamp", default: null },
+    lastLogin: { type: "timestamp", default: null },
     createdAt: { type: "timestamp", default: () => new Date() },
   },
 };
@@ -337,6 +340,36 @@ const UserModel = {
       offset
     );
     return users.docs.map((doc) => UserModel.sanitizeUser(doc));
+  },
+
+  // Check if account is currently locked
+  isLocked: (user) => {
+    if (!user.lockUntil) return false;
+    const now = new Date();
+    return user.lockUntil.toDate?.() > now;
+  },
+
+  // Increment login attempts and possibly lock
+  incrementLoginAttempts: async (db, userId, user) => {
+    const attempts = (user.loginAttempts || 0) + 1;
+    const updates = { loginAttempts: attempts };
+
+    if (attempts >= 3) {
+      const lockTime = new Date(Date.now() + 15 * 60 * 1000); // 30 mins lock
+      updates.lockUntil = lockTime;
+    }
+
+    await firestoreService.update(UserFields.COLLECTION, userId, updates, db);
+  },
+
+  // Reset login attempts
+  resetLoginAttempts: async (db, userId) => {
+    await firestoreService.update(
+      UserFields.COLLECTION,
+      userId,
+      { loginAttempts: 0, lockUntil: null },
+      db
+    );
   },
 };
 

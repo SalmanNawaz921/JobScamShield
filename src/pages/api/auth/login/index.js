@@ -22,10 +22,21 @@ export default async function handler(req, res) {
       .status(403)
       .json({ message: "Email not verified", verified: false });
   }
+
+  if (UserModel.isLocked(user)) {
+    return res
+      .status(423)
+      .json({ message: "Account is locked for 15 minutes. Try again later." });
+  }
+
   const isPasswordValid = await UserModel.verifyPassword(db, user.id, password);
   if (!isPasswordValid) {
-    return res.status(401).json({ message: "Invalid password" });
+    await UserModel.incrementLoginAttempts(db, user.id, user);
+    return res.status(401).json({ message: "Invalid email or password" });
   }
+
+  // Successful login: reset attempts
+  await UserModel.resetLoginAttempts(db, user.id);
 
   if (user.twoFactorEnabled) {
     // ✅ Set a short-lived twofa_pending cookie

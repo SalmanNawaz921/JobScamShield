@@ -98,6 +98,7 @@ import { generateResponseData } from "@/lib/utils/jobScamDetector";
 import { useMessage } from "@/hooks/useMessages";
 import { getPrediction } from "@/services/modalService";
 import Logo from "@/assets/Logo";
+import Loader from "../Loader/Loader";
 
 const ChatComponent = ({ chatId }) => {
   const [messageText, setMessageText] = useState("");
@@ -152,22 +153,34 @@ const ChatComponent = ({ chatId }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-auto w-full">
-       <Logo/>
-        <MessageList
-          messages={messages}
-          loading={loading}
-          isBotResponding={isBotResponding}
-          handleDelete={deleteMessage}
-          handleSubmitEdit={editMessage}
+      {/* Messages container - now scrollable with keyboard */}
+      <div
+        className="flex-1 overflow-y-auto w-full scrollbar-hidden focus:outline-none"
+        tabIndex={0} // Makes the div focusable for keyboard events
+      >
+        <Logo />
+        {loading ? (
+          <Loader />
+        ) : (
+          <MessageList
+            messages={messages}
+            loading={loading}
+            isBotResponding={isBotResponding}
+            handleDelete={deleteMessage}
+            handleSubmitEdit={editMessage}
+          />
+        )}
+      </div>
+
+      {/* Fixed input bar at bottom */}
+      <div className="sticky bottom-0  bg-transparent px-4 py-3">
+        <MessageInput
+          messageText={messageText}
+          setMessageText={setMessageText}
+          handleSendMessage={handleSendMessage}
+          disabled={isBotResponding}
         />
       </div>
-      <MessageInput
-        messageText={messageText}
-        setMessageText={setMessageText}
-        handleSendMessage={handleSendMessage}
-        disabled={isBotResponding}
-      />
     </div>
   );
 };

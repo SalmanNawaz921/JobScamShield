@@ -1,5 +1,11 @@
 import Logo from "@/assets/Logo";
-import { Info, ShieldAlert, AlertCircle, CheckCircle2, Copy } from "lucide-react";
+import {
+  Info,
+  ShieldAlert,
+  AlertCircle,
+  CheckCircle2,
+  Copy,
+} from "lucide-react";
 import { message as antdMessage } from "antd";
 import { useState } from "react";
 
@@ -21,7 +27,7 @@ const BotResponse = ({ responseData, sender }) => {
   const [hovering, setHovering] = useState(false);
 
   // Join all content texts together for copying
-  const copyContent = responseData.map(item => item.content).join("\n\n");
+  const copyContent = responseData.map((item) => item.content).join("\n\n");
 
   const handleCopy = () => {
     navigator.clipboard.writeText(copyContent);

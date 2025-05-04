@@ -33,17 +33,19 @@ const MessageInput = ({
   }, [messageText]);
 
   return (
-    <div className="sticky p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-end gap-2 rounded-xl border border-gray-300 bg-transparent p-1 pl-3 shadow-sm focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+    <div className="px-6 pb-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-end gap-3 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-4 shadow-xl transition focus-within:ring-2 focus-within:ring-blue-500">
+          {/* Attach button */}
           <button
             type="button"
             onClick={handleAttachment}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-lg p-3 text-gray-300 hover:bg-white/10 hover:text-white transition"
           >
-            <Paperclip className="h-5 w-5" />
+            <Paperclip className="h-6 w-6" />
           </button>
 
+          {/* Textarea */}
           <textarea
             ref={textareaRef}
             value={messageText}
@@ -51,22 +53,23 @@ const MessageInput = ({
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
-            placeholder="Message..."
-            className="max-h-32 flex-1 resize-none border-none bg-transparent py-2 text-gray-100 outline-none placeholder:text-gray-400"
+            placeholder="Type your message..."
+            className="max-h-40 flex-1 resize-none border-none bg-transparent py-2 text-white placeholder:text-gray-400 outline-none text-base"
             rows={1}
           />
 
+          {/* Send button */}
           <button
             type="button"
             onClick={handleSendMessage}
             disabled={!messageText.trim()}
-            className={`rounded-lg p-2 ${
+            className={`rounded-lg p-3 transition ${
               messageText.trim()
-                ? "text-blue-600 hover:bg-blue-50"
+                ? "text-blue-500 hover:bg-blue-500/20"
                 : "text-gray-400"
             }`}
           >
-            <SendHorizonal className="h-5 w-5" />
+            <SendHorizonal className="h-6 w-6" />
           </button>
         </div>
       </div>

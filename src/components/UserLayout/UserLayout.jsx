@@ -162,7 +162,6 @@ export default function DashboardLayout({ children }) {
 
         <Content
           style={{
-            overflow: "auto",
             backgroundColor: "#0B1120",
           }}
           className="md:p-16 py-6"

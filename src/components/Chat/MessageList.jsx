@@ -53,17 +53,17 @@ const MessageList = ({
   }, {});
 
   // Auto-scroll
+  const endOfMessagesRef = useRef(null);
+
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  
 
   return (
     <div
       ref={containerRef}
       style={{
-        overflowY: "auto",
         borderRadius: "8px",
         width: "100%",
       }}
@@ -77,6 +77,7 @@ const MessageList = ({
               fontWeight: "bold",
               color: "#aaa",
               fontSize: "14px",
+              
             }}
           >
             {date}
@@ -97,6 +98,8 @@ const MessageList = ({
           />
         </div>
       ))}
+        <div ref={endOfMessagesRef} />
+
     </div>
   );
 };

@@ -182,12 +182,12 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
               >
                 {message?.content}
               </Text>
-              {message?.responseData && (
-                <BotResponse
-                  responseData={message?.responseData}
-                  sender="bot"
-                />
-              )}
+                {message?.responseData && (
+                  <BotResponse
+                    responseData={message?.responseData}
+                    sender="bot"
+                  />
+                )}
             </>
           )}
           {/* Timestamp */}

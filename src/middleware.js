@@ -27,20 +27,22 @@ export async function middleware(req) {
     "/terms",
     "/term&condition",
     "/salespage",
+    "/account/forgot-password",
+    "/account/reset-password",
   ];
   const isPublicRoute = publicRoutes.includes(pathname);
   const is2FAPending = req.cookies.get("twofa_pending")?.value === "true";
   if (is2FAPending && pathname.startsWith("/account/verify-otp")) {
     return NextResponse.next();
   }
-  
+
   // Handle public routes
   if (isPublicRoute) {
     return NextResponse.next();
   }
 
   // If no token and not public route → redirect to login
-  if (!token  ) {
+  if (!token) {
     return NextResponse.redirect(new URL("/login", origin));
   }
 
@@ -48,18 +50,25 @@ export async function middleware(req) {
     // Verify token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-    
+
     const userRole = payload?.role;
     const username = payload?.username;
 
     // Admin route protection
     if (pathname.startsWith("/admin") && userRole !== "admin") {
-      return NextResponse.redirect(new URL("/login", origin));
+      return NextResponse.redirect(
+        new URL(`/admin/${username}/dashboard`, origin)
+      );
     }
 
     // User route protection
-    if (pathname.startsWith("/user") && !pathname.startsWith(`/user/${username}`)) {
-      return NextResponse.redirect(new URL(`/user/${username}/dashboard`, origin));
+    if (
+      pathname.startsWith("/user") &&
+      !pathname.startsWith(`/user/${username}`)
+    ) {
+      return NextResponse.redirect(
+        new URL(`/user/${username}/dashboard`, origin)
+      );
     }
 
     return NextResponse.next();

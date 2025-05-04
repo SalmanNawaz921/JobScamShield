@@ -15,9 +15,17 @@ export default function VerifyOTP() {
     const code = verificationCode;
     const response = await verify2faLoginCode(userData?.id, code);
     if (response?.verified) {
-      message.success("OTP verified successfully!");
-      setUserData(response?.user);
-      router.push(`/user/${userData.username}/dashboard`);
+      console.log("OTP verified successfully!", response);
+      const user = response?.user;
+      if (user) {
+        message.success("OTP verified successfully!");
+        setUserData(user);
+        if (user?.role === "admin") {
+          router.push("/admin");
+          return;
+        }
+        router.push(`/user/${userData.username}/dashboard`);
+      }
     } else {
       message.error("Invalid OTP. Please try again.");
     }

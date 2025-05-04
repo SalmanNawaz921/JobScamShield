@@ -11,14 +11,13 @@ body {
   @apply text-gray-200;
 }
 
-
 /* Global scrollbar styling with glassmorphic feel */
 .scrollbar-hidden {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 .scrollbar-hidden::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none; /* Chrome, Safari and Opera */
 }
 /* Global scrollbar styling */
 /* Global scrollbar styling */
@@ -33,7 +32,12 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1); /* Make track semi-transparent, adjust if needed */
+  background: rgba(
+    0,
+    0,
+    0,
+    0.1
+  ); /* Make track semi-transparent, adjust if needed */
 }
 
 *::-webkit-scrollbar-thumb {
@@ -48,4 +52,85 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25); /* Lighter thumb on hover */
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.3); /* Enhanced shadow on hover */
+}
+
+.botresponse-bg {
+  background-color: rgba(0, 0, 0, 0.6); /* instead of bg-black/60 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.pdf-button {
+  background-color: #2563eb; /* Tailwind's bg-blue-600 */
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.pdf-button:hover {
+  background-color: #1d4ed8; /* bg-blue-700 */
+}
+
+.custom-sidebar-menu .ant-menu-item {
+  border-radius: 12px;
+  margin: 6px 12px;
+  padding: 10px 16px !important;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.custom-sidebar-menu .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.custom-sidebar-menu .ant-menu-item-selected {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #4f46e5 !important;
+}
+
+.custom-sidebar-menu .ant-menu-item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.custom-sidebar-menu {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Custom table glassmorphism overrides */
+.custom-ant-table .ant-table {
+  background: transparent;
+  color: #fff;
+}
+
+.custom-ant-table .ant-table-thead > tr > th {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff;
+  backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.custom-ant-table .ant-table-tbody > tr > td {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.custom-ant-table .ant-pagination {
+  color: #fff;
+}
+
+/* Targeting hover state more precisely */
+
+tr:hover,
+thead:hover {
+  background: #20293c !important;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: none !important;
 }

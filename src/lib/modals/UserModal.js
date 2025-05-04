@@ -294,16 +294,18 @@ const UserModel = {
 
   verifyResetPasswordToken: async (db, userId, token) => {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
+    console.log("user", user);
     if (!user || !user.resetPasswordToken) return false;
     const isValid = await bcrypt.compare(token, user.resetPasswordToken);
+    console.log("Token is valid", isValid);
     if (!isValid) return false;
-
     // Check if token is expired
     const now = new Date();
     const expiryDate =
       user.resetPasswordTokenExpiry.toDate?.() || user.resetPasswordTokenExpiry;
 
     if (expiryDate < now) {
+      console.log("Token is expired", expiryDate, now);
       return false;
     }
     return true;
@@ -322,6 +324,19 @@ const UserModel = {
       db
     );
     return UserModel.sanitizeUser(user);
+  },
+
+  // Get all users (with optional filtering and pagination)
+  getAll: async (db, filters = {}, pagination = {}) => {
+    const { limit = 10, offset = 0 } = pagination;
+    const users = await firestoreService.query(
+      UserFields.COLLECTION,
+      null,
+      db,
+      limit,
+      offset
+    );
+    return users.docs.map((doc) => UserModel.sanitizeUser(doc));
   },
 };
 

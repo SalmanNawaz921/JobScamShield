@@ -1,8 +1,8 @@
 // pages/api/auth/verify-2fa-login.js
 
+import { generateToken } from "@/lib/auth/services/tokenService";
 import { db } from "@/lib/config/firebaseConfig";
 import UserModel from "@/lib/modals/UserModal";
-import { generateToken } from "@/lib/utils/generateToken";
 import { serialize } from "cookie";
 import speakeasy from "speakeasy";
 
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     if (verified) {
       // Return session token or success message
       // Generate a QR code for 2FA setup
-      const token = generateToken(user);
+      const token = await generateToken(user, req);
       const cookie = serialize("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -52,6 +52,7 @@ export default async function handler(req, res) {
           id: user.id,
           email: user.email,
           username: user.username,
+          role: user.role,
         },
         verified: true,
         message: "2FA verification successful",

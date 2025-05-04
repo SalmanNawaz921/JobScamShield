@@ -23,7 +23,7 @@ const labelMap = {
   advice: "Advice",
 };
 
-const BotResponse = ({ responseData, sender }) => {
+const BotResponse = ({ responseData }) => {
   const [hovering, setHovering] = useState(false);
 
   // Join all content texts together for copying

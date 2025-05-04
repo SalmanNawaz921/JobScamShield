@@ -1,7 +1,8 @@
 import UserModel from "@/lib/modals/UserModal";
 import { db } from "@/lib/config/firebaseConfig";
-import { generateToken } from "@/lib/utils/generateToken";
+// import { generateToken } from "@/lib/utils/generateToken";
 import { serialize } from "cookie";
+import { generateToken } from "@/lib/auth/services/tokenService";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
     res.setHeader("Set-Cookie", twofaCookie);
 
     // Generate a QR code for 2FA setup
-    const token = generateToken(user);
+    const token = await generateToken(user, req);
     const cookie = serialize("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -55,7 +56,7 @@ export default async function handler(req, res) {
   }
 
   // Generate a QR code for 2FA setup
-  const token = generateToken(user);
+  const token = await generateToken(user, req);
   const cookie = serialize("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -69,6 +70,7 @@ export default async function handler(req, res) {
       id: user.id,
       email: user.email,
       username: user.username,
+      role: user.role,
     },
     message: "Login successful",
   });

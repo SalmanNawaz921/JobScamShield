@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 const { Header, Sider, Content, Footer } = Layout;
 import FooterComponent from "../Footer/Footer"; // ✅ Correct default import
+import AdminSidebar from "../Admin/AdminSidebar";
 export default function DashboardLayout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -35,7 +36,7 @@ export default function DashboardLayout({ children }) {
             top: 0,
           }}
         >
-          <SideBar />
+          <AdminSidebar />
         </Sider>
       )}
 
@@ -56,7 +57,7 @@ export default function DashboardLayout({ children }) {
           }}
           className="!bg-[#111827]"
         >
-          <SideBar setMenuOpen={setMenuOpen} />
+          <AdminSidebar setMenuOpen={setMenuOpen} />
         </Drawer>
       )}
 

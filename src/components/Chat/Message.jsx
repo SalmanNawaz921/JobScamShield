@@ -18,6 +18,7 @@ import {
 import BotResponse from "../BotResponse/BotResponse";
 import TypingIndicator from "../TypingIndicator/TypingIndicator";
 import MessageActions from "./MessageActions";
+import BotResponsePDFWrapper from "../BotResponse/BotResponsePDFWrapper";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -183,7 +184,7 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
                 {message?.content}
               </Text>
                 {message?.responseData && (
-                  <BotResponse
+                  <BotResponsePDFWrapper
                     responseData={message?.responseData}
                     sender="bot"
                   />

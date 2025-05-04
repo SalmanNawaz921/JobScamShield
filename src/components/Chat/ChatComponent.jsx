@@ -97,6 +97,7 @@ import MessageList from "./MessageList";
 import { generateResponseData } from "@/lib/utils/jobScamDetector";
 import { useMessage } from "@/hooks/useMessages";
 import { getPrediction } from "@/services/modalService";
+import Logo from "@/assets/Logo";
 
 const ChatComponent = ({ chatId }) => {
   const [messageText, setMessageText] = useState("");
@@ -151,7 +152,8 @@ const ChatComponent = ({ chatId }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto w-full">
+       <Logo/>
         <MessageList
           messages={messages}
           loading={loading}

@@ -114,12 +114,13 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
         gap: "12px",
         marginLeft: isSender ? "auto" : "unset",
       }}
+      className="min-w-full"
     >
       {/* Message Content */}
       <div
         style={{
           position: "relative",
-          maxWidth: "75%",
+          maxWidth: "95%",
           minWidth: "120px",
         }}
         onMouseEnter={() => setHovering(true)}
@@ -171,7 +172,7 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
             <>
               <Text
                 style={{
-                  fontSize: "14px",
+                  fontSize: "18px",
                   display: "block",
                   color: isSender ? colors.senderText : colors.receiverText,
                   lineHeight: 1.5,

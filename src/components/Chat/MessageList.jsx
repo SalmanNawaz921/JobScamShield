@@ -1,12 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { List, Typography, Spin } from "antd";
+import { List } from "antd";
 import Message from "./Message";
 import Logo from "@/assets/Logo";
 
-const { Text } = Typography;
-
 const MessageList = ({
-  loading,
   messages,
   handleDelete,
   handleSubmitEdit,
@@ -62,55 +59,44 @@ const MessageList = ({
     }
   }, [messages]);
 
-  if (!messages || messages.length === 0) {
-    return <Logo />;
-  }
-
   return (
     <div
       ref={containerRef}
       style={{
-        flexGrow: 1,
         overflowY: "auto",
-        padding: "16px",
         borderRadius: "8px",
+        width: "100%",
       }}
     >
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "24px" }}>
-          <Spin size="large" />
-        </div>
-      ) : (
-        Object.entries(groupedMessages).map(([date, messages]) => (
-          <div key={date}>
-            <div
-              style={{
-                textAlign: "center",
-                margin: "16px 0",
-                fontWeight: "bold",
-                color: "#aaa",
-                fontSize: "14px",
-              }}
-            >
-              {date}
-            </div>
-
-            <List
-              dataSource={messages}
-              renderItem={(msg) => (
-                <Message
-                  key={msg.id || msg.createdAt}
-                  message={msg}
-                  isSender={msg.sender === "user"}
-                  onEdit={handleSubmitEdit}
-                  onDelete={handleDelete}
-                  isBotResponding={isBotResponding}
-                />
-              )}
-            />
+      {Object.entries(groupedMessages).map(([date, messages]) => (
+        <div key={date} className="px-4  w-full">
+          <div
+            style={{
+              textAlign: "center",
+              margin: "16px 0",
+              fontWeight: "bold",
+              color: "#aaa",
+              fontSize: "14px",
+            }}
+          >
+            {date}
           </div>
-        ))
-      )}
+
+          <List
+            dataSource={messages}
+            renderItem={(msg) => (
+              <Message
+                key={msg.id || msg.createdAt}
+                message={msg}
+                isSender={msg.sender === "user"}
+                onEdit={handleSubmitEdit}
+                onDelete={handleDelete}
+                isBotResponding={isBotResponding}
+              />
+            )}
+          />
+        </div>
+      ))}
     </div>
   );
 };

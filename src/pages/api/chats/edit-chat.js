@@ -15,7 +15,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "Chat ID and Data are required" });
     }
     const chat = await ChatModel.ediChat(db, chatId, data);
-    console.log("Chat updated successfully", chat);
     return res.status(200).json({
       chat,
     });

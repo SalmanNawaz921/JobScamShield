@@ -273,7 +273,6 @@ const ReusableInput = ({
 
   // Handle value changes for preview
   const handleValueChange = (value) => {
-    console.log(value);
     if (onChange) {
       onChange(name, value);
     }
@@ -317,7 +316,6 @@ const ReusableInput = ({
                             [name]: updatedValues,
                           });
                           if (onChange) {
-                            console.log("Updated Values:", updatedValues);
                             onChange(name, updatedValues);
                           }
                         }}

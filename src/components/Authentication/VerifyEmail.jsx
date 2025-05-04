@@ -7,7 +7,6 @@ const VerifyEmail = ({ token }) => {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        console.log("Verifying email with token:", token);
         const response = await fetch(`/api/auth/verify-email?token=${token}`, {
           method: "POST",
           headers: {

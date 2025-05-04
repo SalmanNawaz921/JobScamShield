@@ -33,9 +33,7 @@ export const ChatItem = ({ chat, isActive, username, onRename, onDelete }) => {
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
-    console.log("Renaming chat to:", editedTitle);
     if (editedTitle.trim() && editedTitle !== chat.title) {
-      console.log("Renaming chat to:", editedTitle);
       onRename(chat.id, editedTitle);
     }
     setIsEditing(false);

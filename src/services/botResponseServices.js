@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const addBotResponse = async (data) => {
-  console.log(data, "data in addBotResponse");
   try {
     const botResponseResponse = await axios.post(
       "/api/botResponses/create",
@@ -22,7 +21,6 @@ export const addBotResponse = async (data) => {
 };
 
 export const getBotResponses = async (chatId) => {
-  console.log(chatId, "chatId of getBotResponses");
   try {
     const botResponseResponse = await axios.get(
       "/api/botResponses/get",

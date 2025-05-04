@@ -10,7 +10,6 @@ export default async function handler(req, res) {
   }
 
   const { token, email, newPassword } = req.body;
-  console.log("Reset password request:", req.body);
   if (!token || !email || !newPassword) {
     return res.status(400).json({
       success: false,
@@ -33,7 +32,6 @@ export default async function handler(req, res) {
       userId,
       token
     );
-    console.log("Token verification result:", isValidToken);
     if (!isValidToken) {
       return res.status(400).json({
         success: false,

@@ -296,7 +296,6 @@ const UserModel = {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
     if (!user || !user.resetPasswordToken) return false;
     const isValid = await bcrypt.compare(token, user.resetPasswordToken);
-    console.log("Token verification result 2:", isValid);
     if (!isValid) return false;
 
     // Check if token is expired

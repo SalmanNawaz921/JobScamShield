@@ -25,9 +25,6 @@ export async function POST(request) {
   }
 
   const twoFactorSecret = await UserModel.getTwoFactorSecret(db, userId);
-  console.log("Two Factor", twoFactorSecret);
-  console.log("code", code);
-  console.log("Speakeasy module:", speakeasy);
 
   if (!user.twoFactorEnabled || !twoFactorSecret) {
     return new Response(

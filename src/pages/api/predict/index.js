@@ -6,8 +6,6 @@ export default async function handler(req, res) {
   }
   try {
     const { content } = req.body;
-    console.log("Received content:", content);
-    console.log("Modal API URL:", process.env.MODAL_API_URL);
     const modelResponse = await axios.post(
       `${process.env.MODAL_API_URL}/predict`,
       {

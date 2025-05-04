@@ -274,7 +274,6 @@ const generateChatGPTContent = async (jobText) => {
       throw new Error("No content in response");
     }
 
-    console.log("Raw ChatGPT response:", content);
 
     // Clean the content string before parsing
     const cleanedContent = content
@@ -282,7 +281,6 @@ const generateChatGPTContent = async (jobText) => {
       .replace(/```$/g, "") // Remove potential JSON markers
       .trim();
 
-    console.log("Cleaned content:", cleanedContent);
 
     // Parse the JSON
     const parsed = JSON.parse(cleanedContent);

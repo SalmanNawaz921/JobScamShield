@@ -41,7 +41,6 @@ export async function middleware(req) {
 
   // If no token and not public route → redirect to login
   if (!token  ) {
-    console.log("No token found, redirecting to login");
     return NextResponse.redirect(new URL("/login", origin));
   }
 

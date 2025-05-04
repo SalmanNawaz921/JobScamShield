@@ -22,7 +22,6 @@ const Register = () => {
       },
     });
     if (resp.status === 200) {
-      console.log("User registered successfully:", resp.data);
       message.success("User registered successfully!");
       // Send verification email
       const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random OTP
@@ -48,7 +47,6 @@ const Register = () => {
         message.error("Error sending verification email.");
       }
 
-      console.log("User registered successfully:", resp.data);
     } else {
       console.error("Error registering user:", resp.data);
     }

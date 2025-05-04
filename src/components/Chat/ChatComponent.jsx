@@ -131,7 +131,6 @@ const ChatComponent = ({ chatId }) => {
       // Get AI prediction and response data
       const modalResponse = await getPrediction(messageText);
       const responseData = await generateResponseData(messageText);
-      console.log("User message response:", userMsgResponse);
       // Use dedicated bot response creator
       const botMessage = {
         chatId,

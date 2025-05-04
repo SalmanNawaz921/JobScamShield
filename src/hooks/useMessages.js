@@ -144,8 +144,6 @@ export const useMessage = ({ chatId }) => {
     try {
       const userMsgs = await getMessages(chatId); // USER MESSAGES
       const botMsgs = await getBotResponses(chatId); // BOT RESPONSES
-      console.log(userMsgs, "userMsgs");
-      console.log(botMsgs, "botMsgs");
       // Group bot responses by user message ID
       const responseMap = {};
       for (let bot of botMsgs) {
@@ -160,7 +158,6 @@ export const useMessage = ({ chatId }) => {
         botResponses: responseMap[msg.id] || [],
       }));
 
-      console.log(threaded, "threaded messages");
       setMessages(threaded);
     } catch (err) {
       setError(err.message);

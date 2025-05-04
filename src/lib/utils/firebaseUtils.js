@@ -52,7 +52,6 @@ export const firestoreService = {
   // Add new document (auto-ID)
   add: async (collectionName, data, db) => {
     try {
-      console.log('Adding data to Firestore:', data);
       const docRef = await addDoc(collection(db, collectionName), data);
       return { id: docRef.id, ...data };
     } catch (error) {

@@ -133,7 +133,6 @@ const SideBar = () => {
   };
 
   const handleRenameChat = async (chatId, newName) => {
-    console.log("Renaming chat:", chatId, newName);
     if (newName) {
       await editChat(chatId, newName);
     }

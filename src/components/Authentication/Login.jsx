@@ -8,7 +8,7 @@ import { useUserContext } from "@/context/UserContext";
 
 const Login = () => {
   const router = useRouter();
-  const {setUserData} = useUserContext();
+  const { setUserData } = useUserContext();
   const onLogin = async (values) => {
     try {
       const userData = await handleLogin(values);
@@ -19,6 +19,10 @@ const Login = () => {
         message.success("2FA verification required!");
         setUserData(userData.user);
         router.push(`/account/verify-otp`);
+        return;
+      } else if (userData.emailVerified === false) {
+        message.error("Email not verified. Please check your inbox.");
+        
         return;
       }
       message.success("Login successful!");

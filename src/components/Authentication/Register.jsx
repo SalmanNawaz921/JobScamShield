@@ -24,7 +24,6 @@ const Register = () => {
     if (resp.status === 200) {
       message.success("User registered successfully!");
       // Send verification email
-      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random OTP
       const emailData = {
         name: firstName,
         email: email,

@@ -17,7 +17,9 @@ export default async function handler(req, res) {
   }
 
   if (user.status === "pending" || !user.emailVerified) {
-    return res.status(403).json({ message: "Email not verified" });
+    return res
+      .status(403)
+      .json({ message: "Email not verified", verified: false });
   }
   const isPasswordValid = await UserModel.verifyPassword(db, user.id, password);
   if (!isPasswordValid) {

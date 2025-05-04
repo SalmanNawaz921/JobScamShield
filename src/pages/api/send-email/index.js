@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     const token = await EmailVerificationModel.createToken(db, userId, email);
-    const url = `${process.env.NEXT_PUBLIC_URL}/verify-email?token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
     const emailBody = await emailTemplateBody({
       name: name,
       message: message + " " + url,

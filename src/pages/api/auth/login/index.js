@@ -22,11 +22,15 @@ export default async function handler(req, res) {
       .status(403)
       .json({ message: "Email not verified", verified: false });
   }
-
-  if (UserModel.isLocked(user)) {
-    return res
-      .status(423)
-      .json({ message: "Account is locked for 15 minutes. Try again later." });
+  const accountLocked = UserModel.isLocked(user);
+  if (accountLocked) {
+    const remainingTime = Math.ceil(
+      (user.lockUntil.toDate() - new Date()) / 60000
+    );
+    console.log(`Account is locked for ${remainingTime} more minute(s).`);
+    return res.status(423).json({
+      message: `Account is locked for ${remainingTime} more minute(s). Try again later.`,
+    });
   }
 
   const isPasswordValid = await UserModel.verifyPassword(db, user.id, password);
@@ -49,7 +53,6 @@ export default async function handler(req, res) {
 
     res.setHeader("Set-Cookie", twofaCookie);
 
-    // Generate a QR code for 2FA setup
     const token = await generateToken(user, req);
     const cookie = serialize("token", token, {
       httpOnly: true,

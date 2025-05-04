@@ -345,8 +345,11 @@ const UserModel = {
   // Check if account is currently locked
   isLocked: (user) => {
     if (!user.lockUntil) return false;
-    const now = new Date();
-    return user.lockUntil.toDate?.() > now;
+    const lockUntilDate =
+      typeof user.lockUntil.toDate === "function"
+        ? user.lockUntil.toDate()
+        : new Date(user.lockUntil);
+    return lockUntilDate > new Date();
   },
 
   // Increment login attempts and possibly lock

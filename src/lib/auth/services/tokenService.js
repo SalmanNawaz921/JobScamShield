@@ -11,6 +11,7 @@ export const generateToken = async (user, req) => {
   const token = new SignJWT({
     id: user.id,
     email: user.email,
+    username: user.username,
     ip,
     ua: req.headers["user-agent"],
     role: user.role,

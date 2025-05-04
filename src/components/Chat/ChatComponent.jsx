@@ -162,13 +162,19 @@ const ChatComponent = ({ chatId }) => {
         {loading ? (
           <Loader />
         ) : (
-          <MessageList
-            messages={messages}
-            loading={loading}
-            isBotResponding={isBotResponding}
-            handleDelete={deleteMessage}
-            handleSubmitEdit={editMessage}
-          />
+          <>
+            <MessageList
+              messages={messages}
+              loading={loading}
+              handleDelete={deleteMessage}
+              handleSubmitEdit={editMessage}
+            />
+            {isBotResponding && (
+              <div className="flex justify-center my-4">
+                <Loader />
+              </div>
+            )}
+          </>
         )}
       </div>
 

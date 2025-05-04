@@ -29,6 +29,7 @@ export async function middleware(req) {
     "/salespage",
     "/account/forgot-password",
     "/account/reset-password",
+    "/verify-email",
   ];
   const isPublicRoute = publicRoutes.includes(pathname);
   const is2FAPending = req.cookies.get("twofa_pending")?.value === "true";
@@ -50,7 +51,7 @@ export async function middleware(req) {
     // Verify token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-
+    console.log("JWT payload:", payload);
     const userRole = payload?.role;
     const username = payload?.username;
 

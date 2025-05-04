@@ -134,3 +134,41 @@ export const verify2faLoginCode = async (userId, code) => {
     throw new Error("Failed to verify 2FA login code");
   }
 };
+
+export const handleForgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/forgot-password`, {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Error sending email");
+    } else {
+      throw new Error("Network error. Please try again.");
+    }
+  }
+};
+
+export const handleResetPassword = async (email, newPassword, token) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/reset-password`,
+      { email, newPassword, token },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error resetting password"
+      );
+    } else {
+      throw new Error("Network error. Please try again.");
+    }
+  }
+};

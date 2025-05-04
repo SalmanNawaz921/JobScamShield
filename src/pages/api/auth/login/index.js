@@ -15,6 +15,10 @@ export default async function handler(req, res) {
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
+
+  if (user.status === "pending" || !user.emailVerified) {
+    return res.status(403).json({ message: "Email not verified" });
+  }
   const isPasswordValid = await UserModel.verifyPassword(db, user.id, password);
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Invalid password" });
@@ -40,7 +44,7 @@ export default async function handler(req, res) {
       path: "/",
     });
     res.setHeader("Set-Cookie", cookie);
-    
+
     return res.status(200).json({
       requires2FA: true,
       user: { id: user.id },

@@ -26,6 +26,8 @@ const UserFields = {
     emailVerified: { type: "boolean", default: false },
     twoFactorEnabled: { type: "boolean", default: false },
     twoFactorSecret: { type: "string", private: true, default: null },
+    resetPasswordToken: { type: "string", private: true, default: null },
+    resetPasswordTokenExpiry: { type: "timestamp", default: null },
     createdAt: { type: "timestamp", default: () => new Date() },
   },
 };
@@ -270,6 +272,57 @@ const UserModel = {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
     if (!user || !user.twoFactorSecret) return null;
     return user.twoFactorSecret;
+  },
+
+  // Set reset password token and expiry
+  setResetPasswordToken: async (db, userId, token, expiry) => {
+    const hashedToken = await bcrypt.hash(token, 10);
+
+    const user = await firestoreService.update(
+      UserFields.COLLECTION,
+      userId,
+      {
+        resetPasswordToken: hashedToken,
+        resetPasswordTokenExpiry: expiry,
+      },
+      db
+    );
+    return UserModel.sanitizeUser(user);
+  },
+
+  // Verify reset password token
+
+  verifyResetPasswordToken: async (db, userId, token) => {
+    const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
+    if (!user || !user.resetPasswordToken) return false;
+    const isValid = await bcrypt.compare(token, user.resetPasswordToken);
+    console.log("Token verification result 2:", isValid);
+    if (!isValid) return false;
+
+    // Check if token is expired
+    const now = new Date();
+    const expiryDate =
+      user.resetPasswordTokenExpiry.toDate?.() || user.resetPasswordTokenExpiry;
+
+    if (expiryDate < now) {
+      return false;
+    }
+    return true;
+  },
+
+  // Clear reset password token and expiry
+
+  clearResetPasswordToken: async (db, userId) => {
+    const user = await firestoreService.update(
+      UserFields.COLLECTION,
+      userId,
+      {
+        resetPasswordToken: null,
+        resetPasswordTokenExpiry: null,
+      },
+      db
+    );
+    return UserModel.sanitizeUser(user);
   },
 };
 

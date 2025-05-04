@@ -88,7 +88,7 @@ export const AuthTemplate = ({
 
           <div className="mt-4 text-center space-y-3">
             {showForgotPassword && (
-              <Link href="/forgot-password" className={textColor.link}>
+              <Link href="/account/forgot-password" className={textColor.link}>
                 Forgot credentials?
               </Link>
             )}

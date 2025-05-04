@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       message: message + " " + url,
       link: url,
     });
-    const result = await sendEmail({
+    await sendEmail({
       to: email,
       subject: subject,
       template: emailBody,

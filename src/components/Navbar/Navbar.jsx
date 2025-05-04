@@ -85,7 +85,7 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
               }}
             />
             <span className="text-lg text-white">
-              {userData?.name || "Guest"}
+              {userData?.username || "Guest"}
             </span>
           </Button>
         </Dropdown>

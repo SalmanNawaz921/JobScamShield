@@ -4,7 +4,6 @@ import UserModel from "@/lib/modals/UserModal";
 import jwt from "jsonwebtoken";
 export default async function handler(req, res) {
   const { token } = req.cookies;
-  console.log("Token from cookies:", token);
   if (!token) {
     return res.status(401).json({ message: "No token found" });
   }

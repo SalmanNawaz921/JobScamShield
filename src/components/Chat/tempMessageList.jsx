@@ -60,7 +60,6 @@
 //   }, [messages]);
 
 //   if (!messages || messages.length === 0) {
-//     console.log("No messages found.");
 //     return <Logo />;
 //   }
 

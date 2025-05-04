@@ -20,7 +20,6 @@ export const generateToken = async (user, req) => {
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(secret);
-  console.log("Token generated:", token);
   return token;
 };
 

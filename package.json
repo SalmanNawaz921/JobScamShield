@@ -31,6 +31,8 @@
     "nodemailer": "^6.10.1",
     "openai": "^4.97.0",
     "otplib": "^12.0.1",
+    "pdf-lib": "^1.17.1",
+    "pdfmake": "^0.2.19",
     "postcss": "^8.5.3",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",

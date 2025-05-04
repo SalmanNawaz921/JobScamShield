@@ -15,7 +15,6 @@ export default function VerifyOTP() {
     const code = verificationCode;
     const response = await verify2faLoginCode(userData?.id, code);
     if (response?.verified) {
-      console.log("OTP verified successfully!", response);
       const user = response?.user;
       if (user) {
         message.success("OTP verified successfully!");

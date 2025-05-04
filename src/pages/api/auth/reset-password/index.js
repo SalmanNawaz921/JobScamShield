@@ -32,7 +32,6 @@ export default async function handler(req, res) {
       userId,
       token
     );
-    console.log("isValidToken", isValidToken);
     if (!isValidToken) {
       return res.status(400).json({
         success: false,

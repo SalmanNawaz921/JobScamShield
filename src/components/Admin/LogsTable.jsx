@@ -2,7 +2,6 @@ import { formatFirestoreTimestamp } from "@/lib/utils/utils";
 import { Table } from "antd";
 
 const LogsTable = ({ logs, loading }) => {
-  console.log("LogsTable logs:", logs); // Debugging line
   const columns = [
     {
       title: "Event Type",

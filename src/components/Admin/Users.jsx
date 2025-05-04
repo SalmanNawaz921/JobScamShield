@@ -13,7 +13,6 @@ const Users = () => {
       try {
         const response = await getUsers(); // Adjust the API endpoint as needed
         if (response) {
-          console.log("Users fetched successfully:", response);
           message.success("Users fetched successfully!");
           setUsers(response || []);
         }

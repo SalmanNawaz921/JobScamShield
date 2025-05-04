@@ -10,7 +10,6 @@ const DownloadPDFButton = ({ jobText, analysisData }) => {
       try {
         const pdfData = await generateJobAnalysisPDF(jobText, analysisData);
         // In a real implementation, this would trigger download
-        console.log("PDF generated:", pdfData);
         alert("PDF download would start here");
       } catch (error) {
         console.error("PDF generation failed:", error);

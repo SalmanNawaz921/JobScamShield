@@ -27,7 +27,6 @@ export default async function handler(req, res) {
     const remainingTime = Math.ceil(
       (user.lockUntil.toDate() - new Date()) / 60000
     );
-    console.log(`Account is locked for ${remainingTime} more minute(s).`);
     return res.status(423).json({
       message: `Account is locked for ${remainingTime} more minute(s). Try again later.`,
     });

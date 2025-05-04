@@ -51,7 +51,6 @@ export async function middleware(req) {
     // Verify token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-    console.log("JWT payload:", payload);
     const userRole = payload?.role;
     const username = payload?.username;
 

@@ -297,10 +297,8 @@ const UserModel = {
 
   verifyResetPasswordToken: async (db, userId, token) => {
     const user = await firestoreService.get(UserFields.COLLECTION, userId, db);
-    console.log("user", user);
     if (!user || !user.resetPasswordToken) return false;
     const isValid = await bcrypt.compare(token, user.resetPasswordToken);
-    console.log("Token is valid", isValid);
     if (!isValid) return false;
     // Check if token is expired
     const now = new Date();
@@ -308,7 +306,6 @@ const UserModel = {
       user.resetPasswordTokenExpiry.toDate?.() || user.resetPasswordTokenExpiry;
 
     if (expiryDate < now) {
-      console.log("Token is expired", expiryDate, now);
       return false;
     }
     return true;

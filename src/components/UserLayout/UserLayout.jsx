@@ -84,7 +84,7 @@ import { useUserContext } from "@/context/UserContext";
 import { useEffect, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 const { Header, Sider, Content, Footer } = Layout;
-
+import FooterComponent from "../Footer/Footer";  // ✅ Correct default import
 export default function DashboardLayout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -186,7 +186,7 @@ export default function DashboardLayout({ children }) {
             borderTop: "1px solid rgba(255,255,255,0.1)",
           }}
         >
-          © {new Date().getFullYear()} 語動. All Rights Reserved.
+          <FooterComponent/>
         </Footer>
       </Layout>
     </Layout>

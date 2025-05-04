@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // Generate reset token and expiry (1 hour from now)
     const resetToken = randomBytes(32).toString("hex");
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
-    const url = `http://localhost:3000/account/reset-password?token=${resetToken}&email=${email}`;
+    const url = `${process.env.NEXT_PUBLIC_URL}/account/reset-password?token=${resetToken}&email=${email}`;
 
     // Store token using your UserModel
     await UserModel.setResetPasswordToken(

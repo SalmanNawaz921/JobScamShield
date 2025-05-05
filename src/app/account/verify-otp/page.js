@@ -26,7 +26,11 @@ export default function VerifyOTP() {
         router.push(`/user/${userData.username}/dashboard`);
       }
     } else {
-      message.error("Invalid OTP. Please try again.");
+      message.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Invalid OTP. Please try again."
+      );
     }
   };
   return (

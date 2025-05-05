@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { List } from "antd";
 import Message from "./Message";
 import Logo from "@/assets/Logo";
+import { Timestamp } from "firebase/firestore";
 
 const MessageList = ({
   messages,
@@ -27,12 +28,28 @@ const MessageList = ({
     });
   };
 
+  const convertFirestoreTimestamp = (timestamp) => {
+    // Handle Firestore Timestamp object
+    if (timestamp instanceof Timestamp) {
+      return timestamp.toDate();
+    }
+
+    // Handle object with seconds/nanoseconds (serialized Timestamp)
+    if (timestamp && typeof timestamp === "object" && "seconds" in timestamp) {
+      return new Date(
+        timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+      );
+    }
+
+    // Handle other cases (Date, string, number)
+    return new Date(timestamp);
+  };
   // Flatten user + bot responses into one sorted list
   const flatMessages = messages
     ?.flatMap((msg) => {
       const baseMsg = {
         ...msg,
-        createdAt: msg.createdAt,
+        createdAt: convertFirestoreTimestamp(msg.createdAt),
       };
       const responses = msg.botResponses
         ? msg.botResponses.map((res) => ({
@@ -46,6 +63,7 @@ const MessageList = ({
 
   // Group messages by date
   const groupedMessages = flatMessages?.reduce((acc, msg) => {
+    console.log("Message", msg);
     const date = formatDate(msg?.createdAt);
     if (!acc[date]) acc[date] = [];
     acc[date].push(msg);
@@ -58,8 +76,8 @@ const MessageList = ({
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  
 
+  console.log("Grouped Messages", groupedMessages);
   return (
     <div
       ref={containerRef}
@@ -77,7 +95,6 @@ const MessageList = ({
               fontWeight: "bold",
               color: "#aaa",
               fontSize: "14px",
-              
             }}
           >
             {date}
@@ -98,8 +115,7 @@ const MessageList = ({
           />
         </div>
       ))}
-        <div ref={endOfMessagesRef} />
-
+      <div ref={endOfMessagesRef} />
     </div>
   );
 };

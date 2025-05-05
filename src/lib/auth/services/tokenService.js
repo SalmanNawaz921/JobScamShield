@@ -9,9 +9,7 @@ export const generateToken = async (user, req) => {
     req.socket.remoteAddress;
 
   const token = new SignJWT({
-    id: user.id,
-    email: user.email,
-    username: user.username,
+    ...user,
     ip,
     ua: req.headers["user-agent"],
     role: user.role,

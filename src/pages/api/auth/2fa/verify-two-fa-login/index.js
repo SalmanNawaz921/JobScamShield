@@ -49,10 +49,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         user: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          role: user.role,
+          ...user,
         },
         verified: true,
         message: "2FA verification successful",

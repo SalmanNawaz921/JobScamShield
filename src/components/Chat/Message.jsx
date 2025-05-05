@@ -19,6 +19,7 @@ import BotResponse from "../BotResponse/BotResponse";
 import TypingIndicator from "../TypingIndicator/TypingIndicator";
 import MessageActions from "./MessageActions";
 import BotResponsePDFWrapper from "../BotResponse/BotResponsePDFWrapper";
+import { formatFirestoreTimestamp } from "@/lib/utils/utils";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -183,12 +184,12 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
               >
                 {message?.content}
               </Text>
-                {message?.responseData && (
-                  <BotResponsePDFWrapper
-                    responseData={message?.responseData}
-                    sender="bot"
-                  />
-                )}
+              {message?.responseData && (
+                <BotResponsePDFWrapper
+                  responseData={message?.responseData}
+                  sender="bot"
+                />
+              )}
             </>
           )}
           {/* Timestamp */}
@@ -201,6 +202,7 @@ const Message = ({ message, isSender, onEdit, onDelete, isBotResponding }) => {
               marginTop: "4px",
             }}
           >
+            {/* {formatFirestoreTimestamp(message?.createdAt,"time")} */}
             {new Date(message?.createdAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import BotResponse from "./BotResponse";
@@ -14,13 +13,29 @@ const BotResponsePDFWrapper = ({ responseData }) => {
     return data.map((item) => {
       switch (item.type) {
         case "header":
-          return { text: item.content.toUpperCase(), style: "header", margin: [0, 10, 0, 5] };
+          return {
+            text: item.content.toUpperCase(),
+            style: "header",
+            margin: [0, 10, 0, 5],
+          };
         case "section":
-          return { text: `• ${item.content}`, style: "section", margin: [0, 2] };
+          return {
+            text: `• ${item.content}`,
+            style: "section",
+            margin: [0, 2],
+          };
         case "summary":
-          return { text: `Summary:\n${item.content}`, style: "summary", margin: [0, 10, 0, 5] };
+          return {
+            text: `Summary:\n${item.content}`,
+            style: "summary",
+            margin: [0, 10, 0, 5],
+          };
         case "advice":
-          return { text: `Advice:\n${item.content}`, style: "advice", margin: [0, 10, 0, 5] };
+          return {
+            text: `Advice:\n${item.content}`,
+            style: "advice",
+            margin: [0, 10, 0, 5],
+          };
         case "footer":
           return { text: item.content, style: "footer", margin: [0, 10, 0, 5] };
         default:

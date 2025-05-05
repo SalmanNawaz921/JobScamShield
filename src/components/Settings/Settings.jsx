@@ -4,11 +4,14 @@ import { useState } from "react";
 import "./settings.css";
 import { Cross } from "lucide-react";
 import SecuritySettings from "./sections/SecuritySettings";
+import GeneralSettings from "./sections/GeneralSettings";
 const Settings = ({ openSettings, setOpenSettings }) => {
-  const [selectedTab, setSelectedTab] = useState("Security");
+  const [selectedTab, setSelectedTab] = useState("General");
 
   const renderContent = () => {
     switch (selectedTab) {
+      case "General":
+        return <GeneralSettings />;
       case "Security":
         return <SecuritySettings />;
       default:
@@ -32,7 +35,7 @@ const Settings = ({ openSettings, setOpenSettings }) => {
       <div className="p-2">
         <h1 className="text-xl font-bold"> Settings</h1>
       </div>
-      <Divider className="bg-gray-300 opacity-[10%]"/>
+      <Divider className="bg-gray-300 opacity-[10%]" />
       <div className="modal-content-wrapper">
         <SettingsSidebar
           selectedTab={selectedTab}

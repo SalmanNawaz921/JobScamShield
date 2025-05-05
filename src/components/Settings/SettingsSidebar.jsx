@@ -23,14 +23,14 @@ const SettingsSidebar = ({ selectedTab, setSelectedTab }) => {
         }}
         items={[
           {
-            key: "Security",
-            icon: <LockOutlined style={{ color: "white" }} />,
-            label: <span style={{ color: "white" }}>Security</span>,
-          },
-          {
             key: "General",
             icon: <SettingOutlined style={{ color: "white" }} />,
             label: <span style={{ color: "white" }}>General</span>,
+          },
+          {
+            key: "Security",
+            icon: <LockOutlined style={{ color: "white" }} />,
+            label: <span style={{ color: "white" }}>Security</span>,
           },
         ]}
       />

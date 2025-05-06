@@ -822,7 +822,7 @@ const UserModel = {
   /**
    * Check if account is locked
    */
-  isLocked: async (user) => {
+  isLocked: (user) => {
     if (!user?.lockUntil) return false;
     const lockUntil = user.lockUntil?.toDate?.() || user.lockUntil;
     return lockUntil > new Date();

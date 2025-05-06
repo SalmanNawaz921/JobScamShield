@@ -23,6 +23,7 @@ export default async function handler(req, res) {
       .json({ message: "Email not verified", verified: false });
   }
   const accountLocked = UserModel.isLocked(user);
+  console.log("Account Locked", accountLocked);
   if (accountLocked) {
     const remainingTime = Math.ceil(
       (user.lockUntil.toDate() - new Date()) / 60000

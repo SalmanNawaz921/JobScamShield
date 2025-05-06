@@ -145,17 +145,12 @@ class SecurityValidator {
         return;
       }
 
-      // Custom validation if provided
-      if (config.validate && !config.validate(value)) {
-        errors.push(`${field} failed validation`);
-      }
-
       // Enum validation if provided
       if (config.enum && !this.validateEnum(value, config.enum)) {
         errors.push(`${field} must be one of: ${config.enum.join(", ")}`);
       }
     });
-
+    console.log("Validation Errors", errors);
     return errors;
   }
   static validateFirebaseId(id) {

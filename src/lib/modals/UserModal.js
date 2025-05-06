@@ -863,6 +863,19 @@ const UserModel = {
 
     return true;
   },
+
+  //   // Get all users (with optional filtering and pagination)
+  getAll: async (db, filters = {}, pagination = {}) => {
+    const { limit = 10, offset = 0 } = pagination;
+    const users = await firestoreService.query(
+      UserFields.COLLECTION,
+      null,
+      db,
+      limit,
+      offset
+    );
+    return users.docs.map((doc) => UserModel.sanitizeUser(doc));
+  },
 };
 
 export default UserModel;

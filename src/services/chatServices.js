@@ -65,16 +65,10 @@ export const ediChat = async (chatId, data) => {
 
 export const deleteChat = async (chatId) => {
   try {
-    const chatResponse = await axios.delete(
-      "/api/chats/delete-chat",
-      {
-        userId,
-        chatId,
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    const chatResponse = await axios.delete("/api/chats/delete-chat", {
+      data: { chatId }, // Data goes in the 'data' property
+      withCredentials: true,
+    });
     if (chatResponse.status === 200) {
       return chatResponse.data.chat;
     }

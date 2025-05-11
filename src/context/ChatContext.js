@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+"use client";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useUserContext } from "@/context/UserContext";
 import {
   getChats,
@@ -7,8 +8,10 @@ import {
   deleteChat as deleteChatService,
 } from "@/services/chatServices";
 import { formatFirestoreTimestamp } from "@/lib/utils/utils";
+import { message } from "antd";
+const ChatContext = createContext();
 
-export const useChat = () => {
+export const ChatProvider = ({ children }) => {
   const { userData: user } = useUserContext();
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -53,14 +56,45 @@ export const useChat = () => {
   };
 
   const groupChatsByDate = () => {
-    return chats?.reduce((acc, chat) => {
-      const formattedDate = formatFirestoreTimestamp(chat.startedAt, "relative");
-      if (!acc[formattedDate]) acc[formattedDate] = [];
-      acc[formattedDate].push(chat);
+    // First, sort chats by date (newest first)
+    const sortedChats = [...(chats || [])].sort((a, b) => {
+      // Handle cases where startedAt might be missing
+      if (!a.startedAt?.seconds) return 1;
+      if (!b.startedAt?.seconds) return -1;
+      // Sort in descending order (newest first)
+      return b.startedAt.seconds - a.startedAt.seconds;
+    });
+
+    return sortedChats.reduce((acc, chat) => {
+      const groupKey = formatFirestoreTimestamp(chat.startedAt, "group");
+      const displayTime = formatFirestoreTimestamp(chat.startedAt, "relative");
+
+      if (!acc[groupKey]) {
+        acc[groupKey] = {
+          chats: [],
+          count: 0,
+          isToday: groupKey === "Today",
+          isThisWeek: groupKey === "This Week" || groupKey === "Today",
+          displayTime,
+        };
+      }
+
+      acc[groupKey].chats.push({
+        ...chat,
+        // You might want to add the displayTime to each chat if needed
+        displayTime,
+      });
+      acc[groupKey].count++;
+
       return acc;
     }, {});
   };
+  const groupedChats = groupChatsByDate();
 
+  const todaysChats = groupedChats?.["Today"]?.count || 0;
+  const thisWeeksChats = Object.values(groupedChats || {})
+    .filter((group) => group.isThisWeek)
+    .reduce((sum, group) => sum + group.count, 0);
   const editChat = async (chatId, newName) => {
     if (!user?.id) return;
     const data = { title: newName };
@@ -88,11 +122,14 @@ export const useChat = () => {
 
     setLoading(true);
     setError(null);
-
     try {
-      await deleteChatService(chatId);
-      setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+      const resp = await deleteChatService(chatId);
+      if (resp) {
+        message.success("Chat deleted successfully");
+        setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+      }
     } catch (err) {
+      message.error("Failed to delete chat");
       setError(err.message);
       console.error("Error deleting chat:", err);
       throw err;
@@ -108,14 +145,30 @@ export const useChat = () => {
     }
   }, [user?.id, initialized]);
 
-  return {
-    chats,
-    groupedChats: groupChatsByDate(),
-    loading,
-    error,
-    refetch: fetchChats, // still available if needed
-    createChat,
-    editChat,
-    deleteChat,
-  };
+  return (
+    <ChatContext.Provider
+      value={{
+        chats,
+        groupedChats,
+        todaysChats,
+        thisWeeksChats,
+        loading,
+        error,
+        fetchChats,
+        createChat,
+        editChat,
+        deleteChat,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+
+export const useChat = () => {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error("useChat must be used within a ChatProvider");
+  }
+  return context;
 };

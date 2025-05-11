@@ -10,31 +10,28 @@ import { useRouter } from "next/navigation";
 import { handleLogout } from "@/services/authServices";
 import Settings from "../Settings/Settings";
 import { useState } from "react";
+import "./Navbar.css"; // Import your CSS file for custom styles
 
 export default function Navbar({ mobile, setIsMenuOpen, userData }) {
   const [openSettings, setOpenSettings] = useState(false);
   const router = useRouter();
   const items = [
     {
-      key: "1",
-      label: "My Account",
-      disabled: true,
+      key: "4",
+      label: `Name: ${userData?.firstName} ${userData?.lastName}`,
     },
+    { type: "divider" },
     {
-      type: "divider",
+      key: "1",
+      label: "Profile",
+      extra: "⌘P",
+      icon: <UserOutlined />,
+      onClick: () => {
+        router.push(`/user/${userData?.username}`);
+      },
     },
     {
       key: "2",
-      label: "Profile",
-      extra: "⌘P",
-    },
-    {
-      key: "3",
-      label: "Billing",
-      extra: "⌘B",
-    },
-    {
-      key: "4",
       label: "Settings",
       icon: <SettingOutlined />,
       onClick: () => {
@@ -42,8 +39,9 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
       },
       extra: "⌘S",
     },
+    { type: "divider" },
     {
-      key: "5",
+      key: "3",
       label: "Logout",
       icon: <LogoutOutlined />,
       onClick: async () => {
@@ -70,7 +68,7 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
 
       {/* Profile Button - Right */}
       <div className="ml-auto">
-        <Dropdown menu={{ items }}>
+        {/* <Dropdown menu={{ items }}>
           <Button
             type="text"
             className="flex items-center px-4 py-2 bg-[#9333EA] text-white rounded-full shadow-md border-2 border-white transition-all duration-300 ease-in-out"
@@ -87,6 +85,28 @@ export default function Navbar({ mobile, setIsMenuOpen, userData }) {
             <span className="text-lg text-white">
               {userData?.username || "Guest"}
             </span>
+          </Button>
+        </Dropdown> */}
+        <Dropdown
+          overlayClassName="glass-dropdown"
+          menu={{
+            items,
+            className: "glass-menu",
+          }}
+        >
+          <Button
+            type="text"
+            className="flex items-center px-4 py-2 bg-[#9333EA] text-white rounded-full shadow-md border-2 border-white transition-all duration-300 ease-in-out hover:bg-[#8a2be2] hover:shadow-lg"
+          >
+            <Avatar
+              size="large"
+              icon={<UserOutlined className="text-white text-lg" />}
+              style={{
+                backgroundColor: "#111827",
+                marginRight: "8px",
+                border: "2px solid #ffffff",
+              }}
+            />
           </Button>
         </Dropdown>
       </div>

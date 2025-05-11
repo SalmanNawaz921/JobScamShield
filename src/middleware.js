@@ -5,16 +5,6 @@ export async function middleware(req) {
   const { pathname, origin } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
 
-  // Bypass static files and public assets
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/favicon.ico") ||
-    pathname.startsWith("/robots.txt")
-  ) {
-    return NextResponse.next();
-  }
-
   // Define public routes
   const publicRoutes = [
     "/",
@@ -30,10 +20,17 @@ export async function middleware(req) {
     "/account/forgot-password",
     "/account/reset-password",
     "/verify-email",
+    "/account/verify-otp", // Add verify-otp to public routes
   ];
+
   const isPublicRoute = publicRoutes.includes(pathname);
   const is2FAPending = req.cookies.get("twofa_pending")?.value === "true";
-  if (is2FAPending && pathname.startsWith("/account/verify-otp")) {
+
+  // Handle 2FA pending state
+  if (is2FAPending) {
+    if (pathname !== "/account/verify-otp") {
+      return NextResponse.redirect(new URL("/account/verify-otp", origin));
+    }
     return NextResponse.next();
   }
 
@@ -54,21 +51,28 @@ export async function middleware(req) {
     const userRole = payload?.role;
     const username = payload?.username;
 
-    // Admin route protection
+    // If user is admin trying to access user routes or vice versa
     if (pathname.startsWith("/admin") && userRole !== "admin") {
-      return NextResponse.redirect(
-        new URL(`/admin/${username}/dashboard`, origin)
-      );
+      return NextResponse.redirect(new URL("/", origin));
     }
 
     // User route protection
-    if (
-      pathname.startsWith("/user") &&
-      !pathname.startsWith(`/user/${username}`)
-    ) {
-      return NextResponse.redirect(
-        new URL(`/user/${username}/dashboard`, origin)
-      );
+    if (pathname.startsWith("/user")) {
+      if (userRole !== "user") {
+        return NextResponse.redirect(new URL("/", origin));
+      }
+
+      // Redirect to dashboard if trying to access base user path
+      if (pathname === "/user" || pathname === `/user/${username}`) {
+        return NextResponse.redirect(
+          new URL(`/user/${username}/dashboard`, origin)
+        );
+      }
+    }
+
+    // Admin dashboard redirection
+    if (pathname === "/admin" && userRole === "admin") {
+      return NextResponse.next(); // Let the admin page handle the redirection
     }
 
     return NextResponse.next();

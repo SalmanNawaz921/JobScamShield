@@ -185,7 +185,6 @@ const sanitizeMessageData = (data) => {
 const MessageModel = {
   create: async (db, data) => {
     const sanitizedData = sanitizeMessageData(data);
-    console.log("Sanitized Data", sanitizedData);
     const validationErrors = validateMessageData(sanitizedData);
     
     if (validationErrors.length > 0) {

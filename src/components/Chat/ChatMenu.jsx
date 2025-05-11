@@ -28,7 +28,7 @@ export const ChatMenu = ({
 
           {expandedGroups[date] && (
             <div className="mt-2 space-y-1">
-              {dateChats.map((chat) => (
+              {dateChats.chats.map((chat) => (
                 <ChatItem
                   key={chat.id}
                   chat={chat}

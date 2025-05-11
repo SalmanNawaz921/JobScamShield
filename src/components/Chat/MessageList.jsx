@@ -63,7 +63,6 @@ const MessageList = ({
 
   // Group messages by date
   const groupedMessages = flatMessages?.reduce((acc, msg) => {
-    console.log("Message", msg);
     const date = formatDate(msg?.createdAt);
     if (!acc[date]) acc[date] = [];
     acc[date].push(msg);
@@ -77,7 +76,6 @@ const MessageList = ({
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  console.log("Grouped Messages", groupedMessages);
   return (
     <div
       ref={containerRef}

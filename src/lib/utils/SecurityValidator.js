@@ -150,7 +150,6 @@ class SecurityValidator {
         errors.push(`${field} must be one of: ${config.enum.join(", ")}`);
       }
     });
-    console.log("Validation Errors", errors);
     return errors;
   }
   static validateFirebaseId(id) {

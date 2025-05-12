@@ -23,7 +23,7 @@ export default function VerifyOTP() {
           router.push("/admin");
           return;
         }
-        router.push(`/user/${userData.username}/dashboard`);
+        router.push(`/user/${user.username}/dashboard`);
       }
     } else {
       message.error(

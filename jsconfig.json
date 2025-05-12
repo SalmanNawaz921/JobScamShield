@@ -3,5 +3,7 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["next-env.d.js", "**/*.js", "**/*.tsx", "middleware.js"]
+
 }

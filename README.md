@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# JobScamShield 🛡️
 
-## Getting Started
+JobScamShield is an AI-powered web application designed to detect and prevent fake job postings. It uses advanced NLP and machine learning techniques to analyze job descriptions and flag potentially fraudulent listings. Built with the **Next.js** framework and integrated with **Firebase**, **OpenAI**, and **custom APIs**, the platform also includes admin controls, 2FA, user authentication, and real-time messaging.
 
-First, run the development server:
+## 🌐 Live Demo
+
+[🔗 Visit JobScamShield on Netlify](https://jobscamshield.netlify.app/) *(replace with actual link if different)*
+
+---
+
+## 🚀 Features
+
+- 🔍 **Fake Job Detection** using OpenAI-based classifier
+- 🔐 **Authentication with Firebase** (Email, 2FA)
+- 🛠 **Admin Panel** to manage users and logs
+- 📬 **Email Notifications** via SMTP
+- 💬 **Chat System** for user-bot interaction
+- 🧠 **AI Modal Integration** with external API
+- 🛡️ **Security Middleware** and token-based auth
+- ⚡ **Optimized for Vercel/Netlify Deployments**
+
+---
+
+## 📁 Project Structure
+
+```
+
+src/
+├── app/                   # App directory (Next.js 13+ routing)
+├── assets/                # Assets e.g Logo
+├── components/            # Reusable UI components
+├── context/               # Context
+├── hooks/                 # Hooks
+├── lib/                   # Helper libraries and services
+├── middleware.js          # Route protection logic
+├── pages/                 # Legacy pages directory
+├── sections/              # Static assets
+├── services/              # Services
+└── styles/                # Global and module CSS
+
+````
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React.js, Next.js 15
+- **Backend**: Next.js API Routes, Firebase Functions
+- **Database**: Firebase Firestore
+- **Auth**: Firebase Auth + JWT
+- **AI Integration**: OpenAI, Modal API
+- **Hosting**: Netlify
+- **Email**: Nodemailer
+
+---
+
+## 🧪 Run Locally (Test Environment)
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/SalmanNawaz921/JobScamShield.git
+cd JobScamShield
+````
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Create `.env.test`
+
+```bash
+cp .env.test .env.local
+```
+
+### Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📄 Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a file named `.env.test` and paste the following:
 
-## Learn More
+```
+# API Base URL for Tests
+NEXT_PUBLIC_API_LINK=http://localhost:3000/api
 
-To learn more about Next.js, take a look at the following resources:
+# Firebase Configuration (Mock/Test Keys)
+NEXT_PUBLIC_FIREBASE_API_KEY=FAKE_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=fake-auth-domain.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=fake-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=fake-storage-bucket.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1234567890
+NEXT_PUBLIC_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-FAKE123456
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# SMTP Config (Mock)
+SMTP_EMAIL=test@example.com
+SMTP_PASSWORD=testpassword123
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# JWT Configuration
+JWT_SECRET=testingsecretkey
+JWT_EXPIRATION=1h
 
-## Deploy on Vercel
+# Modal API
+MODAL_API_URL=https://mock-modal-api.com
+MODAL_API_KEY=mock-modal-api-key
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# OpenAI Key (Mock)
+NEXT_PUBLIC_OPENAI_API_KEY=sk-test-1234567890abcdef
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Frontend URL (Mock)
+FRONTEND_URL=http://localhost:3000
+
+```
+
+> ⚠️ **Important**: Never commit `.env.*` files to your repository. Use `.gitignore` to exclude them.
+
+---
+
+## 📦 Production Build
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 📬 Contact
+
+For inquiries or suggestions, reach out to [Salman Nawaz](https://github.com/SalmanNawaz921).
+
+---
+

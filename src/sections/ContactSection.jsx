@@ -76,7 +76,7 @@ const ContactSection = () => {
             </div>
           </form>
         </div>
-
+{/* 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
           <div className="glass-card p-6">
             <div className="flex justify-center">
@@ -106,7 +106,7 @@ const ContactSection = () => {
             <h3 className="mt-4 text-lg font-medium text-white">Visit Us</h3>
             <p className="mt-1 text-blue-100/80">San Francisco, CA</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

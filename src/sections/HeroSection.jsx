@@ -131,12 +131,11 @@ const HeroSection = () => {
       </div>
 
       {/* Glass morphic stats */}
-      <div className="relative z-10 mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-8 text-center">
+      <div className="relative z-10 mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-8 text-center">
         {[
           { value: "99%", label: "Accuracy" },
           { value: "10K+", label: "Jobs Analyzed" },
           { value: "24/7", label: "Protection" },
-          { value: "0", label: "Data Stored" },
         ].map((stat, index) => (
           <div key={index} className="glass-stat-card">
             <div className="text-3xl font-bold text-white">{stat.value}</div>

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
   },
-  "include": ["next-env.d.js", "**/*.js", "**/*.tsx", "middleware.js"]
-
+  "include": ["src", "middleware.js"] // 👈 Important: include middleware
 }

@@ -8,6 +8,7 @@ import { ChatMenu } from "../Chat/ChatMenu";
 import Logo from "@/assets/Logo";
 import Loader from "../Loader/Loader";
 import Link from "next/link";
+import { message } from "antd";
 
 const SideBar = () => {
   const router = useRouter();
@@ -41,7 +42,12 @@ const SideBar = () => {
 
   const handleDeleteChat = async (chatId) => {
     if (confirm("Are you sure you want to delete this chat?")) {
-      await deleteChat(chatId);
+      const deleteChatSuccess = await deleteChat(chatId);
+      console.log("deleteChatSuccess", deleteChatSuccess);
+      if (deleteChatSuccess) {
+        message.success("Chat deleted successfully");
+        router.push(`/user/${user.username}/dashboard`);
+      }
     }
   };
 
@@ -50,7 +56,7 @@ const SideBar = () => {
       {/* Header */}
       <div className="py-8 mt-4">
         <Link href="/">
-        <Logo size="lg" />
+          <Logo size="lg" />
         </Link>
       </div>
 

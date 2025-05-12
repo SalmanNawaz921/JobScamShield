@@ -15,6 +15,7 @@ import {
   textSize,
   flex,
 } from "@/app/theme/tailwind.theme";
+import Logo from "@/assets/Logo";
 
 export const AuthTemplate = ({
   title,
@@ -44,18 +45,10 @@ export const AuthTemplate = ({
       <div className={layout.card}>
         {/* Header */}
         <div className="text-center">
-          <div className={flex.center}>
-            <div
-              className={`${bgColor.badge} ${spacing.p3} ${borderRadius.lg} ${shadow.badge}`}
-            >
-              <LockKeyhole className="h-8 w-8 text-white" />
-            </div>
+          <div className={`${flex.center}  mb-6`}>
+            <Logo size="xl" />
           </div>
-          <h2
-            className={`${spacing.mt6} ${textSize.xl} ${font.bold} ${textColor.primary}`}
-          >
-            {title}
-          </h2>
+
           <p className={`${spacing.mt2} ${textSize.sm} ${textColor.secondary}`}>
             {description}
           </p>

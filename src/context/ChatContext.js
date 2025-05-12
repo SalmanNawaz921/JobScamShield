@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useMemo } from "react";
 import { useUserContext } from "@/context/UserContext";
 import {
   getChats,
@@ -66,8 +66,8 @@ export const ChatProvider = ({ children }) => {
     });
 
     return sortedChats.reduce((acc, chat) => {
-      const groupKey = formatFirestoreTimestamp(chat.startedAt, "group");
-      const displayTime = formatFirestoreTimestamp(chat.startedAt, "relative");
+      const groupKey = formatFirestoreTimestamp(chat?.startedAt, "group");
+      const displayTime = formatFirestoreTimestamp(chat?.startedAt, "relative");
 
       if (!acc[groupKey]) {
         acc[groupKey] = {
@@ -89,8 +89,9 @@ export const ChatProvider = ({ children }) => {
       return acc;
     }, {});
   };
-  const groupedChats = groupChatsByDate();
-
+  const groupedChats = useMemo(() => {
+    return groupChatsByDate();
+  }, [chats]);
   const todaysChats = groupedChats?.["Today"]?.count || 0;
   const thisWeeksChats = Object.values(groupedChats || {})
     .filter((group) => group.isThisWeek)
@@ -125,8 +126,8 @@ export const ChatProvider = ({ children }) => {
     try {
       const resp = await deleteChatService(chatId);
       if (resp) {
-        message.success("Chat deleted successfully");
         setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+        return resp.deleted;
       }
     } catch (err) {
       message.error("Failed to delete chat");

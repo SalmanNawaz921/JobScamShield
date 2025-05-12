@@ -115,27 +115,39 @@ class SecurityValidator {
   static validateObject(obj, schema) {
     if (typeof obj !== "object" || obj === null)
       return ["Input must be an object"];
-
+  
     const errors = [];
-
+  
     Object.entries(schema).forEach(([field, config]) => {
       // Check required fields
       if (config.required && !obj.hasOwnProperty(field)) {
         errors.push(`${field} is required`);
         return;
       }
-
+  
       // Skip validation if field is not required and not provided
       if (!config.required && !obj.hasOwnProperty(field)) {
         return;
       }
-
-      // Type checking
+  
       const value = obj[field];
+  
+      // Allow null if field is optional and explicitly allows null (like endedAt)
+      if (value === null) {
+        if (config.default === null || config.allowNull) {
+          return; // Valid null
+        } else {
+          errors.push(`${field} cannot be null`);
+          return;
+        }
+      }
+  
+      // Type checking
       if (config.type === "array" && !Array.isArray(value)) {
         errors.push(`${field} must be an array`);
         return;
       }
+  
       if (
         config.type !== "array" &&
         typeof value !== config.type &&
@@ -144,14 +156,16 @@ class SecurityValidator {
         errors.push(`${field} must be of type ${config.type}`);
         return;
       }
-
+  
       // Enum validation if provided
       if (config.enum && !this.validateEnum(value, config.enum)) {
         errors.push(`${field} must be one of: ${config.enum.join(", ")}`);
       }
     });
+  
     return errors;
   }
+  
   static validateFirebaseId(id) {
     if (typeof id !== "string") return false;
     // Firebase IDs must be non-empty and can't contain forward slashes

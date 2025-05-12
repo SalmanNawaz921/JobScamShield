@@ -26,6 +26,7 @@ const Login = () => {
         return;
       }
       message.success("Login successful!");
+      setUserData(userData.user);
       router.push(`/user/${userData.user.username}/dashboard`);
     } catch (error) {
       console.error("Login error:", error);

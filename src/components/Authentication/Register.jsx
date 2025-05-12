@@ -1,12 +1,10 @@
 "use client";
 import { registerFormFields } from "@/lib/constants/constants";
 import { AuthTemplate } from "./AuthTemplate";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import { message } from "antd";
 
 const Register = () => {
-  const router = useRouter();
   const handleRegister = async (values) => {
     const { email, password, firstName, lastName, username } = values;
     const requestBody = {
@@ -16,40 +14,49 @@ const Register = () => {
       lastName,
       username,
     };
-    const resp = await axios.post("/api/auth/register", requestBody, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (resp.status === 200) {
-      // Send verification email
-      const emailData = {
-        name: firstName,
-        email: email,
-        link: `${window.location.origin}/verify-email`,
-        subject: "Verify your email address",
-        message: `Welcome To JobScamShield, In order to complete your registration, please verify your email address.`,
-        userId: resp.data.userId,
-      };
-      const emailResp = await axios.post("/api/send-email", emailData, {
+
+    try {
+      const resp = await axios.post("/api/auth/register", requestBody, {
         headers: {
           "Content-Type": "application/json",
         },
       });
+      if (resp.status === 200) {
+        // Send verification email
+        const emailData = {
+          name: firstName,
+          email: email,
+          link: `${window.location.origin}/verify-email`,
+          subject: "Verify your email address",
+          message: `Welcome To JobScamShield, In order to complete your registration, please verify your email address.`,
+          userId: resp.data.userId,
+        };
+        const emailResp = await axios.post("/api/send-email", emailData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      if (emailResp.status === 200) {
-        message.success("Verification email sent successfully!");
+        if (emailResp.status === 200) {
+          message.success("Verification email sent successfully!");
+        }
+        // Handle email sending error
+        else {
+          message.error("Error sending verification email.");
+        }
+      } else {
+        console.error("Error registering user:", resp.data);
       }
-      // Handle email sending error
-      else {
-        message.error("Error sending verification email.");
-      }
-
-    } else {
-      console.error("Error registering user:", resp.data);
+    } catch (error) {
+      console.error("Error registering user:", error);
+      message.error(
+        error.response?.data?.message ||
+          error.message ||
+          "An error occurred during registration"
+      );
     }
-    //    router.push("/verify-email"); // Redirect to login page after successful registration
   };
+
   return (
     <AuthTemplate
       title="Join JobScamShield Protection"

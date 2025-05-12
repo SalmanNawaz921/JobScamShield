@@ -1,6 +1,5 @@
 import UserModel from "@/lib/modals/UserModal";
 import { db } from "@/lib/config/firebaseConfig";
-// import { generateToken } from "@/lib/utils/generateToken";
 import { serialize } from "cookie";
 import { generateToken } from "@/lib/auth/services/tokenService";
 export default async function handler(req, res) {

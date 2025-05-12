@@ -86,10 +86,6 @@ export async function middleware(req) {
   }
 }
 
-// export const config = {
-//   matcher: ["/((?!api|_next|static|.*\\..*).*)"],
-// };
-
 export const config = {
   matcher: ["/((?!api|_next|images|favicon.ico|robots.txt).*)"], // Exclude static files and API routes
 };

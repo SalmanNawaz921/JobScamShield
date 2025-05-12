@@ -1,27 +1,3 @@
-// import Logo from "@/assets/Logo";
-// import { useChat } from "@/context/ChatContext";
-
-// const UserDashboard = ({ username }) => {
-//   const { chats } = useChat();
-
-//   return (
-//     <div className="text-white">
-//       <div className="flex flex-col items-center justify-center p-4">
-//         <Logo description=" "/>
-//         <p className="mt-2 text-gray-400">
-//           Welcome {username}! Your Ultimate Scam Detector.
-//         </p>
-//       </div>
-//       <div className="shadow-2xl text-white">
-//         <h2>Your Chats</h2>
-//         <h3>{chats.length}</h3>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default UserDashboard;
-
 import Logo from "@/assets/Logo";
 import { useChat } from "@/context/ChatContext";
 import {

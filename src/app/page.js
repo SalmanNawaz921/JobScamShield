@@ -1,24 +1,3 @@
-// import "./globals.css";
-// import HeroSection from "@/sections/HeroSection";
-// import FeaturesSection from "@/sections/FeaturesSection";
-// import ChatbotSection from "@/sections/ChatbotSection";
-// import Header from "@/components/Header/Header";
-// import Footer from "@/components/Footer/Footer";
-
-// export default function Home() {
-//   return (
-//     <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#0b1120] to-[#111827] text-white overflow-hidden backdrop-blur-md">
-//       <Header />
-//       <main className="flex-grow">
-//         <HeroSection />
-//         <FeaturesSection />
-//         <ChatbotSection />
-//       </main>
-//       <Footer />
-//     </div>
-//   );
-// }
-
 import "./globals.css";
 import HeroSection from "@/sections/HeroSection";
 import FeaturesSection from "@/sections/FeaturesSection";

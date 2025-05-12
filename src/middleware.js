@@ -3,6 +3,7 @@ import { jwtVerify } from "jose";
 
 export async function middleware(req) {
   const { pathname, origin } = req.nextUrl;
+  console.log("Middleware triggered for path:", pathname);
   const token = req.cookies.get("token")?.value;
 
   // Define public routes
@@ -86,5 +87,6 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|images|favicon.ico|robots.txt).*)"],
+  matcher: ["/((?!api|_next|static|.*\\..*).*)"],
 };
+

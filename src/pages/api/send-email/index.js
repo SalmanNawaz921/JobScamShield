@@ -1,5 +1,6 @@
 import { db } from "@/lib/config/firebaseConfig";
 import EmailVerificationModel from "@/lib/modals/EmailVerificationModal";
+import UserModel from "@/lib/modals/UserModal";
 import { sendEmail } from "@/lib/utils/email";
 import { emailTemplateBody } from "@/lib/utils/verifyMail";
 export default async function handler(req, res) {
@@ -14,6 +15,10 @@ export default async function handler(req, res) {
 
   try {
     const token = await EmailVerificationModel.createToken(db, userId, email);
+    if (!token) {
+      await UserModel.delete(db, userId);
+      return res.status(400).json({ error: "Failed to create user" });
+    }
     const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
     const emailBody = await emailTemplateBody({
       name: name,

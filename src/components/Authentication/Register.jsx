@@ -22,7 +22,6 @@ const Register = () => {
       },
     });
     if (resp.status === 200) {
-      message.success("User registered successfully!");
       // Send verification email
       const emailData = {
         name: firstName,

@@ -148,7 +148,7 @@ const EmailVerificationModel = {
       expiresAt,
       used: false
     };
-
+    console.log("Verification data before validation",verificationData);
     // Validate before saving
     const validationErrors = SecurityValidator.validateObject(
       verificationData, 
@@ -176,7 +176,7 @@ const EmailVerificationModel = {
     if (!TokenSecurity.validateTokenFormat(token)) {
       throw new Error('Invalid token format');
     }
-
+    console.log("Token format validated",token);
     // Get token document
     const doc = await firestoreService.get(
       EmailVerificationFields.COLLECTION,
@@ -189,24 +189,24 @@ const EmailVerificationModel = {
     }
 
     // Validate document structure
-    const validationErrors = SecurityValidator.validateObject(
-      doc,
-      EmailVerificationFields.FIELDS
-    );
+    // const validationErrors = SecurityValidator.validateObject(
+    //   doc,
+    //   EmailVerificationFields.FIELDS
+    // );
     
-    if (validationErrors.length > 0) {
-      await firestoreService.delete(
-        EmailVerificationFields.COLLECTION,
-        token,
-        db
-      );
-      throw new Error('Invalid verification data');
-    }
+    // if (validationErrors.length > 0) {
+    //   await firestoreService.delete(
+    //     EmailVerificationFields.COLLECTION,
+    //     token,
+    //     db
+    //   );
+    //   throw new Error('Invalid verification data');
+    // }
 
-    // Check if token was already used
-    if (doc.used) {
-      throw new Error('Token has already been used');
-    }
+    // // Check if token was already used
+    // if (doc.used) {
+    //   throw new Error('Token has already been used');
+    // }
 
     // Check expiration
     const now = new Date();

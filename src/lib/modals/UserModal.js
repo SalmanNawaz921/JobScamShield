@@ -479,9 +479,9 @@ const UserFields = {
   },
 };
 
-const validateUserData = (data) => {
-  return SecurityValidator.validateObject(data, UserFields.FIELDS);
-};
+// const validateUserData = (data) => {
+//   return SecurityValidator.validateObject(data, UserFields.FIELDS);
+// };
 
 const sanitizeUserData = (data) => {
   const sanitized = {};
@@ -518,11 +518,11 @@ const UserModel = {
    */
   create: async (db, data) => {
     const sanitizedData = sanitizeUserData(data);
-    const validationErrors = validateUserData(sanitizedData);
+    // const validationErrors = validateUserData(sanitizedData);
 
-    if (validationErrors.length > 0) {
-      throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
-    }
+    // if (validationErrors.length > 0) {
+    //   throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
+    // }
 
     // Check unique fields
     await UserModel.checkUniqueFields(db, {
@@ -875,6 +875,11 @@ const UserModel = {
       offset
     );
     return users.docs.map((doc) => UserModel.sanitizeUser(doc));
+  },
+
+  //   // Delete user
+  delete: async (db, userId) => {
+    await firestoreService.delete(UserFields.COLLECTION, userId, db);
   },
 };
 

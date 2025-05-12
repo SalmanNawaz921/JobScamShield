@@ -24,8 +24,10 @@ const AdminSidebar = () => {
   return (
     <div className="flex flex-col h-screen w-64 backdrop-blur shadow-lg">
       {/* Header */}
-      <div className="px-6 py-4 mt-4">
-        <Logo description=" " />
+      <div className="py-8 mt-4">
+        <Link href="/">
+          <Logo size="lg" />
+        </Link>
       </div>
 
       {/* Navigation Menu */}

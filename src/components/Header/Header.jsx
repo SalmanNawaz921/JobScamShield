@@ -4,14 +4,15 @@ import { Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { menuItems } from "@/lib/constants/constants";
+import Logo from "@/assets/Logo";
 
 export default function Header({ mobile, setIsMenuOpen }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 py-6 flex items-center justify-between">
         {/* Logo placeholder - add your logo here */}
-        <div className="text-white text-xl font-bold">JobScamShield</div>
-        
+        {/* <div className="text-white text-xl font-bold">JobScamShield</div> */}
+      <Logo size="md"/>        
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {menuItems.map((item) => (

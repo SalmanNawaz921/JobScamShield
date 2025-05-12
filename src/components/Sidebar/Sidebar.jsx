@@ -7,6 +7,7 @@ import { useChat } from "@/context/ChatContext";
 import { ChatMenu } from "../Chat/ChatMenu";
 import Logo from "@/assets/Logo";
 import Loader from "../Loader/Loader";
+import Link from "next/link";
 
 const SideBar = () => {
   const router = useRouter();
@@ -47,8 +48,10 @@ const SideBar = () => {
   return (
     <div className="flex flex-col h-screen w-64">
       {/* Header */}
-      <div className="px-4 py-2 mt-4">
-        <Logo description=" " />
+      <div className="py-8 mt-4">
+        <Link href="/">
+        <Logo size="lg" />
+        </Link>
       </div>
 
       <button

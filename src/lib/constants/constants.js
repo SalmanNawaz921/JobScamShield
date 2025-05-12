@@ -7,12 +7,17 @@ export const menuItems = [
   {
     key: 2,
     label: "About",
-    url: "/about",
+    url: "#about",
   },
   {
     key: 3,
+    label: "Features",
+    url: "#features",
+  },
+  {
+    key: 4,
     label: "Contact",
-    url: "/contact",
+    url: "#contact",
   },
 ];
 export const registerFormFields = [

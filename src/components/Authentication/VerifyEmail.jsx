@@ -38,7 +38,7 @@
 import { useRouter } from 'next/navigation';
 import { message } from 'antd';
 import { useEffect } from 'react';
-import Logo from '@/components/Logo';
+import Logo from '@/assets/Logo';
 
 const VerifyEmail = ({ token }) => {
   const router = useRouter();

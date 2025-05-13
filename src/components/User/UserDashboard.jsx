@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Loader from "../Loader/Loader";
+import Link from "next/link";
 
 const DashboardCard = ({ title, value }) => (
   <div className="backdrop-blur border border-white/10 bg-white/5 shadow-lg rounded-2xl p-6 flex flex-col items-center text-white">
@@ -21,7 +22,9 @@ const DashboardCard = ({ title, value }) => (
 const EventChart = ({ chartData = [] }) => (
   <div className="rounded-2xl border border-white/10 backdrop-blur bg-white/5 shadow-lg  pb-8 pt-4">
     <div className="h-64 mt-8 p-4 W-[100%]">
-      <h2 className="text-white text-lg mb-4 font-medium px-4">Chat Activity</h2>
+      <h2 className="text-white text-lg mb-4 font-medium px-4">
+        Chat Activity
+      </h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <CartesianGrid stroke="#ffffff1a" />
@@ -105,14 +108,16 @@ const UserDashboard = ({ username }) => {
                             key={chat.id}
                             className="border border-white/10 p-4 rounded-lg hover:bg-white/5 transition-colors"
                           >
-                            <h4 className="font-medium truncate">
-                              {chat.title || `Chat ${chat.id}`}
-                            </h4>
-                            <p className="text-sm text-gray-400 mt-1">
-                              {new Date(
-                                chat.startedAt?.seconds * 1000
-                              ).toLocaleString()}
-                            </p>
+                            <Link href={`/user/${username}/c/${chat.id}`}>
+                              <h4 className="font-medium truncate">
+                                {chat.title || `Chat ${chat.id}`}
+                              </h4>
+                              <p className="text-sm text-gray-400 mt-1">
+                                {new Date(
+                                  chat.startedAt?.seconds * 1000
+                                ).toLocaleString()}
+                              </p>
+                            </Link>
                           </div>
                         ))}
                       </div>

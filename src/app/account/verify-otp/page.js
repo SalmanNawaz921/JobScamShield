@@ -13,19 +13,27 @@ export default function VerifyOTP() {
   const handelVerifyOTP = async (values) => {
     const { verificationCode } = values;
     const code = verificationCode;
-    const response = await verify2faLoginCode(userData?.id, code);
-    if (response?.verified) {
-      const user = response?.user;
-      if (user) {
-        message.success("OTP verified successfully!");
-        setUserData(user);
-        if (user?.role === "admin") {
-          router.push("/admin");
-          return;
+    try {
+      const response = await verify2faLoginCode(userData?.id, code);
+      if (response?.verified) {
+        const user = response?.user;
+        if (user) {
+          message.success("OTP verified successfully!");
+          setUserData(user);
+          if (user?.role === "admin") {
+            router.push("/admin");
+            return;
+          }
+          router.push(`/user/${user.username}/dashboard`);
         }
-        router.push(`/user/${user.username}/dashboard`);
+      } else {
+        message.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Invalid OTP. Please try again."
+        );
       }
-    } else {
+    } catch (error) {
       message.error(
         error.response?.data?.message ||
           error.message ||

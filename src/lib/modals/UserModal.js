@@ -738,7 +738,7 @@ const UserModel = {
    * Enable 2FA for user
    */
   enable2FA: async (db, userId, secret) => {
-    if (!secret || secret.length !== 32) {
+    if (!secret) {
       throw new Error("Invalid 2FA secret");
     }
 

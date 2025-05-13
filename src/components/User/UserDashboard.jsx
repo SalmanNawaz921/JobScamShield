@@ -19,9 +19,9 @@ const DashboardCard = ({ title, value }) => (
 );
 
 const EventChart = ({ chartData = [] }) => (
-  <div className="rounded-2xl border border-white/10 backdrop-blur bg-white/5 shadow-lg px-8 pb-8 pt-4">
-    <div className="h-64 mt-8 p-4">
-      <h2 className="text-white text-lg mb-4 font-medium">Chat Activity</h2>
+  <div className="rounded-2xl border border-white/10 backdrop-blur bg-white/5 shadow-lg  pb-8 pt-4">
+    <div className="h-64 mt-8 p-4 W-[100%]">
+      <h2 className="text-white text-lg mb-4 font-medium px-4">Chat Activity</h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <CartesianGrid stroke="#ffffff1a" />

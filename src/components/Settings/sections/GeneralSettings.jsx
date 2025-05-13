@@ -4,7 +4,7 @@ import { registerFormFields } from "@/lib/constants/constants";
 const GeneralSettings = () => {
   const { userData } = useUserContext();
   return (
-    <div className="  backdrop-blur-md rounded-2xl   grid grid-cols-2 gap-4 p-4">
+    <div className="  backdrop-blur-md rounded-2xl   grid grid-cols-2 gap-4 md:p-4 p-0">
       {registerFormFields
         .filter((field) => field.type !== "password")
         .map((field, index) => (

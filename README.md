@@ -4,7 +4,7 @@ JobScamShield is an AI-powered web application designed to detect and prevent fa
 
 ## 🌐 Live Demo
 
-[🔗 Visit JobScamShield on Netlify](https://jobscamshield.netlify.app/) *(replace with actual link if different)*
+[🔗 Visit JobScamShield](https://jobscamshield.netlify.app/)
 
 ---
 

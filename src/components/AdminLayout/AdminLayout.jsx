@@ -23,6 +23,7 @@ export default function DashboardLayout({ children }) {
     <Layout
       style={{ minHeight: "100vh", backgroundColor: "#0B1120", color: "white" }}
     >
+      {console.log("Deployment")}
       {/* Sidebar */}
       {!mobile && (
         <Sider

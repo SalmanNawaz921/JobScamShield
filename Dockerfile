@@ -1,29 +1,27 @@
 # 1️⃣ Build stage
 FROM node:20-alpine AS builder
+WORKDIR /src/app
 
-# Set working directory
-WORKDIR /app
-
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install all dependencies (including dev) for building
 RUN npm ci
 
 # Copy source code
 COPY . .
 
-# Build the Next.js app
+# Build the app
+# Next.js will pick up environment variables at build time from the OS
 RUN npm run build
 
+# ───────────────────────────────
 # 2️⃣ Production stage
 FROM node:20-alpine AS runner
-WORKDIR /app
+WORKDIR /src/app
 
-# Copy built app and node_modules from builder
-COPY --from=builder /app ./
+# Copy built output and package files
+COPY --from=builder /src/app ./
 
-# Set production environment
+# Set NODE_ENV
 ENV NODE_ENV=production
 
 # Expose port
